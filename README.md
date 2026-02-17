@@ -72,7 +72,7 @@ A multi-agent orchestration demo using Microsoft Agent Framework SDK and Azure A
 ### 1. Clone and Setup
 
 ```bash
-git clone https://github.com/your-org/FoundryIQ-and-Agent-Framework-demo.git
+git clone https://github.com/leyredelacalzada/FoundryIQ-and-Agent-Framework-demo.git
 cd FoundryIQ-and-Agent-Framework-demo
 
 # Create virtual environment
