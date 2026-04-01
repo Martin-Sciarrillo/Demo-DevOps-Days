@@ -4,7 +4,8 @@ import asyncio
 from azure.identity.aio import DefaultAzureCredential
 
 from agent_framework import Agent, Message, Content
-from agent_framework.azure import AzureOpenAIChatClient, AzureAISearchContextProvider
+from agent_framework_openai import OpenAIChatCompletionClient
+from agent_framework.azure import AzureAISearchContextProvider
 
 from config import OPENAI_ENDPOINT, SEARCH_ENDPOINT, MODEL, MKT_INDEX
 
@@ -16,7 +17,7 @@ Be specific and cite sources when possible."""
 async def run_marketing_agent(query: str) -> str:
     """Run the Marketing agent with a query."""
     async with DefaultAzureCredential() as credential:
-        client = AzureOpenAIChatClient(endpoint=OPENAI_ENDPOINT, deployment_name=MODEL, credential=credential)
+        client = OpenAIChatCompletionClient(model=MODEL, azure_endpoint=OPENAI_ENDPOINT, credential=credential, api_version="2024-12-01-preview")
         async with (
             AzureAISearchContextProvider(
                 "marketing-search",

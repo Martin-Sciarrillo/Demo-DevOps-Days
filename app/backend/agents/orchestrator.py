@@ -5,7 +5,8 @@ load_dotenv(Path(__file__).resolve().parents[3] / ".env")
 from azure.identity.aio import DefaultAzureCredential
 
 from agent_framework import Agent, Message, Content
-from agent_framework.azure import AzureOpenAIChatClient, AzureAISearchContextProvider
+from agent_framework_openai import OpenAIChatCompletionClient
+from agent_framework.azure import AzureAISearchContextProvider
 
 from config import OPENAI_ENDPOINT, SEARCH_ENDPOINT, MODEL, HR_INDEX, MKT_INDEX, PRD_INDEX
 
@@ -49,10 +50,11 @@ async def route_query(router: Agent, query: str) -> str:
 
 async def run_orchestrator():
     async with DefaultAzureCredential() as credential:
-        client = AzureOpenAIChatClient(
-            endpoint=OPENAI_ENDPOINT,
-            deployment_name=MODEL,
+        client = OpenAIChatCompletionClient(
+            model=MODEL,
+            azure_endpoint=OPENAI_ENDPOINT,
             credential=credential,
+            api_version="2024-12-01-preview",
         )
         async with (
             AzureAISearchContextProvider(
