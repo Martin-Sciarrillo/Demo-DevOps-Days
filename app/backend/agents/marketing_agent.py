@@ -6,7 +6,7 @@ from azure.identity.aio import DefaultAzureCredential
 from agent_framework import Agent, Message, Content
 from agent_framework.azure import AzureOpenAIChatClient, AzureAISearchContextProvider
 
-from config import OPENAI_ENDPOINT, SEARCH_ENDPOINT, MODEL, MKT_KB_NAME
+from config import OPENAI_ENDPOINT, SEARCH_ENDPOINT, MODEL, MKT_INDEX
 
 MARKETING_INSTRUCTIONS = """You are a Marketing Specialist Agent for Zava Corporation.
 Answer questions about marketing campaigns, brand guidelines, and marketing strategies using the knowledge base.
@@ -19,16 +19,17 @@ async def run_marketing_agent(query: str) -> str:
         client = AzureOpenAIChatClient(endpoint=OPENAI_ENDPOINT, deployment_name=MODEL, credential=credential)
         async with (
             AzureAISearchContextProvider(
+                "marketing-search",
                 endpoint=SEARCH_ENDPOINT,
-                knowledge_base_name=MKT_KB_NAME,
+                index_name=MKT_INDEX,
                 credential=credential,
-                mode="agentic",
-                knowledge_base_output_mode="answer_synthesis",
+                mode="semantic",
+                semantic_configuration_name="default",
             ) as kb_context,
         ):
             agent = Agent(
                 client=client,
-                context_provider=kb_context,
+                context_providers=[kb_context],
                 instructions=MARKETING_INSTRUCTIONS,
             )
             message = Message(role="user", contents=[Content.from_text(query)])

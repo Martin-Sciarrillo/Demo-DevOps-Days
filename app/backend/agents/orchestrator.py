@@ -7,11 +7,7 @@ from azure.identity.aio import DefaultAzureCredential
 from agent_framework import Agent, Message, Content
 from agent_framework.azure import AzureOpenAIChatClient, AzureAISearchContextProvider
 
-from config import (
-    OPENAI_ENDPOINT, SEARCH_ENDPOINT, MODEL,
-    HR_KB_NAME, MKT_KB_NAME, PRD_KB_NAME,
-    HR_SOURCE_ID, MKT_SOURCE_ID, PRD_SOURCE_ID,
-)
+from config import OPENAI_ENDPOINT, SEARCH_ENDPOINT, MODEL, HR_INDEX, MKT_INDEX, PRD_INDEX
 
 HR_INSTRUCTIONS = """You are an HR Specialist Agent for Zava Corporation.
 Answer questions about HR policies, PTO, benefits, and employee handbook using the knowledge base.
@@ -60,36 +56,36 @@ async def run_orchestrator():
         )
         async with (
             AzureAISearchContextProvider(
-                HR_SOURCE_ID,
+                "hr-search",
                 endpoint=SEARCH_ENDPOINT,
-                knowledge_base_name=HR_KB_NAME,
+                index_name=HR_INDEX,
                 credential=credential,
-                mode="agentic",
-                knowledge_base_output_mode="answer_synthesis",
-            ) as hr_kb,
+                mode="semantic",
+                semantic_configuration_name="default",
+            ) as hr_search,
             AzureAISearchContextProvider(
-                MKT_SOURCE_ID,
+                "marketing-search",
                 endpoint=SEARCH_ENDPOINT,
-                knowledge_base_name=MKT_KB_NAME,
+                index_name=MKT_INDEX,
                 credential=credential,
-                mode="agentic",
-                knowledge_base_output_mode="answer_synthesis",
-            ) as marketing_kb,
+                mode="semantic",
+                semantic_configuration_name="default",
+            ) as marketing_search,
             AzureAISearchContextProvider(
-                PRD_SOURCE_ID,
+                "products-search",
                 endpoint=SEARCH_ENDPOINT,
-                knowledge_base_name=PRD_KB_NAME,
+                index_name=PRD_INDEX,
                 credential=credential,
-                mode="agentic",
-                knowledge_base_output_mode="answer_synthesis",
-            ) as products_kb,
+                mode="semantic",
+                semantic_configuration_name="default",
+            ) as products_search,
         ):
             router = Agent(client=client, instructions=ROUTER_INSTRUCTIONS)
 
             specialists = {
-                "hr": Agent(client=client, context_provider=hr_kb, instructions=HR_INSTRUCTIONS),
-                "marketing": Agent(client=client, context_provider=marketing_kb, instructions=MARKETING_INSTRUCTIONS),
-                "products": Agent(client=client, context_provider=products_kb, instructions=PRODUCTS_INSTRUCTIONS),
+                "hr": Agent(client=client, context_providers=[hr_search], instructions=HR_INSTRUCTIONS),
+                "marketing": Agent(client=client, context_providers=[marketing_search], instructions=MARKETING_INSTRUCTIONS),
+                "products": Agent(client=client, context_providers=[products_search], instructions=PRODUCTS_INSTRUCTIONS),
             }
 
             print("\n Multi-Agent Orchestrator with KB Grounding")

@@ -13,6 +13,7 @@ openai>=1.12.0
 # Microsoft Agent Framework
 agent-framework-core>=1.0.0b260107
 agent-framework-azure-ai>=1.0.0b260107
+agent-framework-azure-ai-search>=1.0.0b260107
 
 # Utilities
 httpx>=0.26.0

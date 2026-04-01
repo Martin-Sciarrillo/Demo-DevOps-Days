@@ -6,7 +6,7 @@ from azure.identity.aio import DefaultAzureCredential
 from agent_framework import Agent, Message, Content
 from agent_framework.azure import AzureOpenAIChatClient, AzureAISearchContextProvider
 
-from config import OPENAI_ENDPOINT, SEARCH_ENDPOINT, MODEL, HR_KB_NAME
+from config import OPENAI_ENDPOINT, SEARCH_ENDPOINT, MODEL, HR_INDEX
 
 HR_INSTRUCTIONS = """You are an HR Specialist Agent for Zava Corporation.
 Answer questions about HR policies, PTO, benefits, and employee handbook using the knowledge base.
@@ -19,16 +19,17 @@ async def run_hr_agent(query: str) -> str:
         client = AzureOpenAIChatClient(endpoint=OPENAI_ENDPOINT, deployment_name=MODEL, credential=credential)
         async with (
             AzureAISearchContextProvider(
+                "hr-search",
                 endpoint=SEARCH_ENDPOINT,
-                knowledge_base_name=HR_KB_NAME,
+                index_name=HR_INDEX,
                 credential=credential,
-                mode="agentic",
-                knowledge_base_output_mode="answer_synthesis",
+                mode="semantic",
+                semantic_configuration_name="default",
             ) as kb_context,
         ):
             agent = Agent(
                 client=client,
-                context_provider=kb_context,
+                context_providers=[kb_context],
                 instructions=HR_INSTRUCTIONS,
             )
             message = Message(role="user", contents=[Content.from_text(query)])
