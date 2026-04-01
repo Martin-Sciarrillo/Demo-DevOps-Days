@@ -57,15 +57,14 @@ create_kb "kb1-hr" "{
     \"outputMode\": \"answerSynthesis\",
     \"knowledgeSources\": [
         {\"name\": \"ks-hr-sharepoint\"},
-        {\"name\": \"ks-hr-aisearch\"},
-        {\"name\": \"ks-hr-web\"}
+        {\"name\": \"ks-hr-aisearch\"}
     ],
     \"models\": [{
         \"kind\": \"azureOpenAI\",
         \"azureOpenAIParameters\": {
             \"resourceUri\": \"${OPENAI_ENDPOINT}\",
-            \"deploymentId\": \"gpt-4.1\",
-            \"modelName\": \"gpt-4.1\"
+            \"deploymentId\": \"gpt-4o\",
+            \"modelName\": \"gpt-4o\"
         }
     }],
     \"retrievalReasoningEffort\": {\"kind\": \"medium\"}
@@ -80,16 +79,14 @@ create_kb "kb2-marketing" "{
     \"answerInstructions\": \"Provide actionable marketing insights. Reference specific campaigns, metrics, and guidelines. Suggest creative ideas when appropriate.\",
     \"outputMode\": \"answerSynthesis\",
     \"knowledgeSources\": [
-        {\"name\": \"ks-marketing\"},
-        {\"name\": \"ks-blob-marketing\"},
-        {\"name\": \"ks-marketing-web\"}
+        {\"name\": \"ks-marketing\"}
     ],
     \"models\": [{
         \"kind\": \"azureOpenAI\",
         \"azureOpenAIParameters\": {
             \"resourceUri\": \"${OPENAI_ENDPOINT}\",
-            \"deploymentId\": \"gpt-4.1\",
-            \"modelName\": \"gpt-4.1\"
+            \"deploymentId\": \"gpt-4o\",
+            \"modelName\": \"gpt-4o\"
         }
     }],
     \"retrievalReasoningEffort\": {\"kind\": \"medium\"}
@@ -104,15 +101,14 @@ create_kb "kb3-products" "{
     \"answerInstructions\": \"Provide accurate product information including prices, features, and availability. Include SKU numbers when available.\",
     \"outputMode\": \"answerSynthesis\",
     \"knowledgeSources\": [
-        {\"name\": \"ks-products\"},
-        {\"name\": \"ks-products-onelake\"}
+        {\"name\": \"ks-products\"}
     ],
     \"models\": [{
         \"kind\": \"azureOpenAI\",
         \"azureOpenAIParameters\": {
             \"resourceUri\": \"${OPENAI_ENDPOINT}\",
-            \"deploymentId\": \"gpt-4.1\",
-            \"modelName\": \"gpt-4.1\"
+            \"deploymentId\": \"gpt-4o\",
+            \"modelName\": \"gpt-4o\"
         }
     }],
     \"retrievalReasoningEffort\": {\"kind\": \"medium\"}

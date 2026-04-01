@@ -148,7 +148,7 @@ PRODUCTS_DOCS='{
             "id": "prod-007",
             "title": "ZavaCam 4K Pro",
             "category": "Cameras",
-            "content": "ZavaCam 4K Pro webcam: 4K/30fps or 1080p/60fps. Auto-framing AI, background blur. Noise-canceling dual mics. Built-in privacy shutter. USB-C plug and play. Works with Zoom, Teams, Google Meet. Field of view: 90° adjustable. Price: $199.99. Stock: 1,800 units. SKU: ZC-4K-PRO. Studio quality for remote work."
+            "content": "ZavaCam 4K Pro webcam: 4K/30fps or 1080p/60fps. Auto-framing AI, background blur. Noise-canceling dual mics. Built-in privacy shutter. USB-C plug and play. Works with Zoom, Teams, Google Meet. Field of view: 90-degree adjustable. Price: $199.99. Stock: 1,800 units. SKU: ZC-4K-PRO. Studio quality for remote work."
         },
         {
             "@search.action": "upload",
