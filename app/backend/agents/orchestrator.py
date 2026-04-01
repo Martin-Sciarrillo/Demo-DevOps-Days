@@ -48,6 +48,52 @@ async def route_query(router: Agent, query: str) -> str:
     return "hr"
 
 
+async def run_single_query(query: str) -> tuple[str, str, list]:
+    """Single-shot query for the FastAPI endpoint."""
+    async with DefaultAzureCredential() as credential:
+        client = OpenAIChatCompletionClient(
+            model=MODEL,
+            azure_endpoint=OPENAI_ENDPOINT,
+            credential=credential,
+            api_version="2024-12-01-preview",
+        )
+        async with (
+            AzureAISearchContextProvider(
+                "hr-search",
+                endpoint=SEARCH_ENDPOINT,
+                index_name=HR_INDEX,
+                credential=credential,
+                mode="semantic",
+                semantic_configuration_name="default",
+            ) as hr_search,
+            AzureAISearchContextProvider(
+                "marketing-search",
+                endpoint=SEARCH_ENDPOINT,
+                index_name=MKT_INDEX,
+                credential=credential,
+                mode="semantic",
+                semantic_configuration_name="default",
+            ) as marketing_search,
+            AzureAISearchContextProvider(
+                "products-search",
+                endpoint=SEARCH_ENDPOINT,
+                index_name=PRD_INDEX,
+                credential=credential,
+                mode="semantic",
+                semantic_configuration_name="default",
+            ) as products_search,
+        ):
+            router = Agent(client=client, instructions=ROUTER_INSTRUCTIONS)
+            specialists = {
+                "hr": Agent(client=client, context_providers=[hr_search], instructions=HR_INSTRUCTIONS),
+                "marketing": Agent(client=client, context_providers=[marketing_search], instructions=MARKETING_INSTRUCTIONS),
+                "products": Agent(client=client, context_providers=[products_search], instructions=PRODUCTS_INSTRUCTIONS),
+            }
+            route = await route_query(router, query)
+            resp = await specialists[route].run(user_message(query))
+            return route, resp.text or "", []
+
+
 async def run_orchestrator():
     async with DefaultAzureCredential() as credential:
         client = OpenAIChatCompletionClient(
