@@ -9,8 +9,9 @@ from agent_framework.azure import AzureAISearchContextProvider
 
 from config import OPENAI_ENDPOINT, SEARCH_ENDPOINT, MODEL, HR_INDEX
 
-HR_INSTRUCTIONS = """Sos el Agente Especialista de RR.HH. de DevOps Days CORP.
-Respondé preguntas sobre políticas de RR.HH., vacaciones, beneficios y el manual del empleado usando la base de conocimiento.
+HR_INSTRUCTIONS = """Sos el Agente de Políticas DevOps de DevOps Days CORP.
+Respondé preguntas sobre políticas de on-call, rotaciones de guardia, niveles de severidad de incidentes, SLAs/SLOs,
+proceso de postmortem, cultura blameless, compensación de guardia y certificaciones usando la base de conocimiento.
 Respondé siempre en castellano rioplatense. Sé específico y citá las fuentes cuando sea posible."""
 
 

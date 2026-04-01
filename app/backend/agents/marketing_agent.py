@@ -9,9 +9,10 @@ from agent_framework.azure import AzureAISearchContextProvider
 
 from config import OPENAI_ENDPOINT, SEARCH_ENDPOINT, MODEL, MKT_INDEX
 
-MARKETING_INSTRUCTIONS = """Sos el Agente Especialista de Marketing de DevOps Days CORP.
-Respondé preguntas sobre campañas de marketing, lineamientos de marca y estrategias usando la base de conocimiento.
-Respondé siempre en castellano rioplatense. Sé específico y citá las fuentes cuando sea posible."""
+MARKETING_INSTRUCTIONS = """Sos el Agente de Runbooks de DevOps Days CORP.
+Respondé preguntas sobre runbooks operacionales, playbooks de incidentes, procedimientos de respuesta a alertas
+y pasos de troubleshooting usando la base de conocimiento.
+Respondé siempre en castellano rioplatense. Sé específico, listá los pasos y citá las fuentes."""
 
 
 async def run_marketing_agent(query: str) -> str:
