@@ -1,170 +1,167 @@
-# Demo DevOps Days — Multi-Agent Orchestration con Azure AI
+# FoundryIQ and Agent Framework Demo
 
 > Demo presentada en **DevOps Days** por [Martin Sciarrillo](https://github.com/Martin-Sciarrillo)
 
-Demo de orquestación multi-agente usando el **Microsoft Agent Framework SDK** y **Azure AI Search** con búsqueda semántica. Simula un asistente interno de DevOps Days CORP que un ingeniero de guardia puede consultar a las 2am para resolver incidentes.
+A multi-agent orchestration demo using Microsoft Agent Framework SDK and Azure AI Foundry with Azure AI Search for grounded retrieval. Simula un asistente interno que un ingeniero de guardia puede consultar para resolver incidentes.
 
-## Qué hace la demo
+![Demo Screenshot](docs/demo-screenshot.png)
 
-Un **agente orquestador** recibe la pregunta del usuario, decide a qué especialista enviarla y devuelve una respuesta fundamentada en la base de conocimiento correspondiente:
+## Features
+
+- **Multi-Agent Orchestration**: Intelligent routing of queries to specialized agents (Políticas, Runbooks, Herramientas)
+- **Microsoft Agent Framework SDK**: Built on the official `agent-framework` Python SDK
+- **Azure AI Search**: Semantic retrieval mode with `gpt-4o` for grounded responses
+- **RBAC-Only Authentication**: No API keys - uses DefaultAzureCredential for all services
+- **Fully Automated Deployment**: Infrastructure as Code with Bicep + setup scripts
+
+## Architecture
 
 ```
-Pregunta del usuario
-        │
-        ▼
-┌───────────────────┐
-│    ORQUESTADOR    │  analiza el intent y enruta
-└──────┬────────────┘
-       │
-   ┌───┴──────────────────────┐
-   │                          │
-   ▼                          ▼                          ▼
-┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
-│ Agente Políticas │  │ Agente Runbooks  │  │ Agente Herram.   │
-│ Soporte & On-Call│  │ Ops SRE          │  │ Plataforma       │
-│                  │  │                  │  │                  │
-│ index-hr         │  │ index-marketing  │  │ index-products   │
-│ · On-call/guardia│  │ · Runbooks       │  │ · Kubernetes/EKS │
-│ · SLA/SLO        │  │ · Playbooks P1   │  │ · Terraform      │
-│ · Postmortem     │  │ · Troubleshooting│  │ · Vault/Grafana  │
-│ · Certificaciones│  │ · Alertas        │  │ · CI/CD/ArgoCD   │
-└──────────────────┘  └──────────────────┘  └──────────────────┘
-        │                      │                      │
-        └──────────────────────┴──────────────────────┘
-                               │
-                    Azure AI Search (semántico)
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                              User Query                                       │
+│            "¿Cómo resuelvo un CrashLoopBackOff en producción?"               │
+└─────────────────────────────────┬────────────────────────────────────────────┘
+                                  │
+                                  ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                         ORCHESTRATOR AGENT                                    │
+│                                                                               │
+│   • Analyzes user intent                                                      │
+│   • Routes to appropriate specialist agent                                    │
+│   • Returns grounded response with citations                                  │
+└───────────┬─────────────────────┬─────────────────────┬──────────────────────┘
+            │                     │                     │
+            ▼                     ▼                     ▼
+┌───────────────────┐  ┌───────────────────┐  ┌───────────────────┐
+│  AGENTE POLÍTICAS │  │  AGENTE RUNBOOKS  │  │ AGENTE HERRAM.    │
+│  Soporte & On-Call│  │  Operaciones SRE  │  │ Plataforma        │
+│                   │  │                   │  │                   │
+│ index-hr          │  │ index-marketing   │  │ index-products    │
+│ • On-call/guardia │  │ • Runbooks ops    │  │ • Kubernetes/EKS  │
+│ • SLA/SLO         │  │ • Playbooks P1    │  │ • Terraform/Vault │
+│ • Postmortem      │  │ • Troubleshooting │  │ • CI/CD/ArgoCD    │
+└─────────┬─────────┘  └─────────┬─────────┘  └─────────┬─────────┘
+          │                      │                      │
+          ▼                      ▼                      ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                           AZURE AI SEARCH                                     │
+│  ┌────────────────────────────────────────────────────────────────────────┐  │
+│  │                    ÍNDICES (búsqueda semántica)                         │  │
+│  │                                                                         │  │
+│  │  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐              │  │
+│  │  │   index-hr   │    │index-marketing│    │index-products│              │  │
+│  │  │   gpt-4o     │    │   gpt-4o     │    │   gpt-4o     │              │  │
+│  │  └──────────────┘    └──────────────┘    └──────────────┘              │  │
+│  └────────────────────────────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Stack técnico
+## Prerequisites
 
-| Capa | Tecnología |
-|------|-----------|
-| Agentes | Microsoft Agent Framework SDK (`agent-framework`, `agent-framework-openai`) |
-| LLM | Azure OpenAI `gpt-4o` vía `OpenAIChatCompletionClient` |
-| Retrieval | Azure AI Search — modo semántico (`AzureAISearchContextProvider`) |
-| Auth | `DefaultAzureCredential` — sin API keys, solo RBAC |
-| Backend | FastAPI + uvicorn |
-| Frontend | React (build estático servido por FastAPI) |
-
-## Bases de conocimiento
-
-| Índice | Agente | Contenido |
-|--------|--------|-----------|
-| `index-hr` | Políticas / Soporte & On-Call | Políticas de guardia, rotaciones, niveles de severidad, SLA/SLO, postmortem blameless, compensación, certificaciones |
-| `index-marketing` | Runbooks / Operaciones SRE | Runbooks operacionales: CPU alto, CrashLoopBackOff, rollback, DB lenta, latencia, disco, SSL, playbook P1 |
-| `index-products` | Herramientas / Plataforma | Catálogo de herramientas: Kubernetes/EKS, Terraform, Vault, Grafana+Prometheus, GitHub Actions, ArgoCD, Datadog, PagerDuty |
-
-## Requisitos previos
-
-- Suscripción Azure con rol **Owner** o **Contributor + User Access Administrator**
+- Azure subscription with Owner or Contributor + User Access Administrator
 - [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)
 - [Azure Developer CLI (azd)](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd)
-- Python 3.11+
+- [Python 3.11+](https://www.python.org/downloads/)
 
-## Setup
+## Quick Start
 
-### 1. Clonar y crear entorno
+### 1. Clone and Setup
 
 ```bash
 git clone https://github.com/Martin-Sciarrillo/Demo-DevOps-Days.git
 cd Demo-DevOps-Days
 
+# Create virtual environment
 python -m venv .venv
 
 # Windows
 .venv\Scripts\Activate.ps1
-
 # Linux/Mac
 source .venv/bin/activate
 
+# Install dependencies
 pip install -r requirements-dev.txt
 ```
 
-### 2. Desplegar infraestructura
+### 2. Deploy Infrastructure
 
 ```bash
 az login && azd auth login
 azd up
 ```
 
-### 3. Crear índices y cargar datos
+### 3. Setup Search Indexes
 
 ```bash
 ./scripts/setup_indexes.sh
 ./scripts/upload_sample_data.sh
 ```
 
-### 4. Configurar RBAC en Azure Search (manual)
+### 4. Configure Search RBAC (Manual)
 
-En Azure Portal: **Search service → Keys → "Both"** (API keys + RBAC).
+In Azure Portal: Search service → Keys → Set to **"Both"** (API keys + RBAC)
 
-### 5. Configurar variables de entorno
+### 5. Configure Environment
 
-Crear un archivo `.env` en la raíz del repo:
+Create a `.env` file at the repo root:
 
 ```env
-AZURE_OPENAI_ENDPOINT=https://<tu-recurso>.openai.azure.com/
-AZURE_SEARCH_ENDPOINT=https://<tu-recurso>.search.windows.net
+AZURE_OPENAI_ENDPOINT=https://<your-resource>.openai.azure.com/
+AZURE_SEARCH_ENDPOINT=https://<your-resource>.search.windows.net
 AZURE_OPENAI_DEPLOYMENT=gpt-4o
 ```
 
-### 6. Correr la app
+### 6. Run the App
 
 ```bash
 cd app/backend
 uvicorn main:app --reload
 ```
 
-Abrir [http://localhost:8000](http://localhost:8000).
+Open [http://localhost:8000](http://localhost:8000)
 
-Al arrancar, uvicorn inicializa la conexión con Azure AD, el cliente OpenAI y los tres proveedores de búsqueda una sola vez — sin overhead por request.
-
-## Probar desde línea de comandos
+### 7. Test the Orchestrator
 
 ```bash
-# Activar venv primero
-.venv\Scripts\Activate.ps1
-
 python app/backend/agents/orchestrator.py
 ```
 
-Consultas de ejemplo:
-- `"¿Cuál es el procedimiento de escalado para un incidente P1?"`
-- `"¿Cómo resuelvo un CrashLoopBackOff en producción?"`
-- `"¿Qué herramienta usamos para gestión de secretos?"`
+Try: `"¿Cuál es el procedimiento de escalado para un P1?"` or `"¿Qué herramienta usamos para gestión de secretos?"`
 
-## Estructura del proyecto
+## Project Structure
 
 ```
-├── app/
-│   └── backend/
-│       ├── main.py                  # FastAPI app + lifespan (warmup de agentes)
-│       ├── agents/
-│       │   ├── orchestrator.py      # Router + agentes especialistas + OrchestratorState
-│       │   ├── config.py            # Endpoints y nombres de índices
-│       │   ├── hr_agent.py          # Agente standalone de políticas
-│       │   ├── marketing_agent.py   # Agente standalone de runbooks
-│       │   └── products_agent.py    # Agente standalone de herramientas
-│       └── static/                  # Frontend React (build pre-compilado)
-├── infra/                           # Bicep IaC
-├── scripts/                         # Scripts de setup y despliegue
-│   ├── setup_indexes.sh
-│   ├── upload_sample_data.sh
-│   ├── setup_rbac.sh
-│   └── auth_init.sh / auth_init.ps1
-└── docs/
+├── app/backend/
+│   ├── main.py              # FastAPI app (initializes agents once at startup)
+│   └── agents/
+│       ├── orchestrator.py  # Router + specialist agents + OrchestratorState singleton
+│       ├── config.py        # Endpoints and index names
+│       ├── hr_agent.py      # Standalone políticas agent
+│       ├── marketing_agent.py # Standalone runbooks agent
+│       └── products_agent.py  # Standalone herramientas agent
+├── infra/                   # Bicep IaC templates
+├── scripts/                 # Setup and deployment scripts
+└── docs/                    # Documentation
 ```
+
+## Knowledge Base Mapping
+
+| Agent | Index | Content |
+|-------|-------|---------|
+| Políticas (Soporte & On-Call) | index-hr | On-call policies, rotaciones, SLA/SLO, postmortem, certificaciones |
+| Runbooks (Operaciones SRE) | index-marketing | Runbooks operacionales, playbooks P1, troubleshooting paso a paso |
+| Herramientas (Plataforma) | index-products | Kubernetes/EKS, Terraform, Vault, Grafana, GitHub Actions, ArgoCD, Datadog, PagerDuty |
 
 ## Troubleshooting
 
-| Error | Solución |
-|-------|----------|
-| `403 Forbidden` en Search | Portal → Search → Keys → **"Both"** |
-| `ModuleNotFoundError: config` | Correr uvicorn desde `app/backend/`, no desde la raíz |
-| `ModuleNotFoundError: dotenv` | Activar el venv: `.venv\Scripts\Activate.ps1` |
-| Respuestas genéricas sin datos | Verificar que los índices tengan documentos (`setup_indexes.sh` + `upload_sample_data.sh`) |
-| Demora en primer request | Normal: es el warmup del token AAD. Desde el segundo request es más rápido. |
+| Issue | Fix |
+|-------|-----|
+| 403 Forbidden | Portal → Search → Keys → "Both" |
+| `ModuleNotFoundError: config` | Run uvicorn from `app/backend/`, not repo root |
+| `ModuleNotFoundError: dotenv` | Activate venv first: `.venv\Scripts\Activate.ps1` |
+| Generic responses | Ensure indexes have documents (`upload_sample_data.sh`) |
+| Slow first response | Normal — Azure AD token warmup. Subsequent requests are faster. |
 
-## Licencia
+## License
 
-MIT
+MIT License
