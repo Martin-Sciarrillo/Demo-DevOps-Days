@@ -1,25 +1,14 @@
 import asyncio
-import os
 from azure.identity.aio import DefaultAzureCredential
 
 from agent_framework import Agent, Message, Content
 from agent_framework.azure import AzureAIAgentClient, AzureAISearchContextProvider
 
-SEARCH_ENDPOINT = os.getenv("AZURE_SEARCH_ENDPOINT", "https://srch-g5mlw6gto4s6i.search.windows.net")
-PROJECT_ENDPOINT = os.getenv(
-    "AZURE_AI_PROJECT_ENDPOINT",
-    "https://jusamano-2099-resource.services.ai.azure.com/api/projects/jusamano-2099",
+from config import (
+    SEARCH_ENDPOINT, PROJECT_ENDPOINT, MODEL,
+    HR_KB_NAME, MKT_KB_NAME, PRD_KB_NAME,
+    HR_SOURCE_ID, MKT_SOURCE_ID, PRD_SOURCE_ID,
 )
-MODEL = os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4.1")
-
-HR_KB_NAME = "kb1-hr"
-MKT_KB_NAME = "kb2-marketing"
-PRD_KB_NAME = "kb3-products"
-
-# ✅ IMPORTANT: provide source_id (prefer env vars)
-HR_SOURCE_ID = os.getenv("KB1_HR_SOURCE_ID", HR_KB_NAME)
-MKT_SOURCE_ID = os.getenv("KB2_MARKETING_SOURCE_ID", MKT_KB_NAME)
-PRD_SOURCE_ID = os.getenv("KB3_PRODUCTS_SOURCE_ID", PRD_KB_NAME)
 
 HR_INSTRUCTIONS = """You are an HR Specialist Agent for Zava Corporation.
 Answer questions about HR policies, PTO, benefits, and employee handbook using the knowledge base.
@@ -67,8 +56,6 @@ async def run_orchestrator():
                 model_deployment_name=MODEL,
                 credential=credential,
             ) as client,
-
-            # ✅ FIX: pass source_id as FIRST argument
             AzureAISearchContextProvider(
                 HR_SOURCE_ID,
                 endpoint=SEARCH_ENDPOINT,
@@ -77,7 +64,6 @@ async def run_orchestrator():
                 mode="agentic",
                 knowledge_base_output_mode="answer_synthesis",
             ) as hr_kb,
-
             AzureAISearchContextProvider(
                 MKT_SOURCE_ID,
                 endpoint=SEARCH_ENDPOINT,
@@ -86,7 +72,6 @@ async def run_orchestrator():
                 mode="agentic",
                 knowledge_base_output_mode="answer_synthesis",
             ) as marketing_kb,
-
             AzureAISearchContextProvider(
                 PRD_SOURCE_ID,
                 endpoint=SEARCH_ENDPOINT,
@@ -104,23 +89,23 @@ async def run_orchestrator():
                 "products": Agent(client=client, context_provider=products_kb, instructions=PRODUCTS_INSTRUCTIONS),
             }
 
-            print("\n🤖 Multi-Agent Orchestrator with KB Grounding")
+            print("\n Multi-Agent Orchestrator with KB Grounding")
             print("=" * 55)
             print("Type 'quit' to exit\n")
 
             while True:
-                query = input("❓ Question: ").strip()
+                query = input("Question: ").strip()
                 if not query:
                     continue
                 if query.lower() in ["quit", "exit", "q"]:
-                    print("\n👋 Goodbye!")
+                    print("\nGoodbye!")
                     return
 
                 route = await route_query(router, query)
-                print(f"📍 Routing to: {route.upper()} agent")
+                print(f"Routing to: {route.upper()} agent")
 
                 resp = await specialists[route].run(user_message(query))
-                print(f"\n💬 Response:\n{resp.text}\n")
+                print(f"\nResponse:\n{resp.text}\n")
                 print("-" * 55)
 
 
