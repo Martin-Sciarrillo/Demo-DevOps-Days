@@ -40,9 +40,13 @@ class HealthResponse(BaseModel):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Application lifespan handler."""
+    """Application lifespan handler — initializes agents once at startup."""
+    from agents.orchestrator import startup, shutdown
     print("Starting FoundryIQ Agent Framework Demo...")
+    await startup()
+    print("Agents ready.")
     yield
+    await shutdown()
     print("Shutting down...")
 
 

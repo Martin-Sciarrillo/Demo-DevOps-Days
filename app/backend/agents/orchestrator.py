@@ -51,50 +51,78 @@ async def route_query(router: Agent, query: str) -> str:
     return "hr"
 
 
-async def run_single_query(query: str) -> tuple[str, str, list]:
-    """Single-shot query for the FastAPI endpoint."""
-    async with DefaultAzureCredential() as credential:
-        client = OpenAIChatCompletionClient(
+class OrchestratorState:
+    """Singleton state: credential, client, agents — initialized once at startup."""
+
+    def __init__(self):
+        self._credential = None
+        self._client = None
+        self._hr_search = None
+        self._marketing_search = None
+        self._products_search = None
+        self.router = None
+        self.specialists = None
+
+    async def start(self):
+        self._credential = DefaultAzureCredential()
+        self._client = OpenAIChatCompletionClient(
             model=MODEL,
             azure_endpoint=OPENAI_ENDPOINT,
-            credential=credential,
+            credential=self._credential,
             api_version="2024-12-01-preview",
         )
-        async with (
-            AzureAISearchContextProvider(
-                "hr-search",
-                endpoint=SEARCH_ENDPOINT,
-                index_name=HR_INDEX,
-                credential=credential,
-                mode="semantic",
-                semantic_configuration_name="default",
-            ) as hr_search,
-            AzureAISearchContextProvider(
-                "marketing-search",
-                endpoint=SEARCH_ENDPOINT,
-                index_name=MKT_INDEX,
-                credential=credential,
-                mode="semantic",
-                semantic_configuration_name="default",
-            ) as marketing_search,
-            AzureAISearchContextProvider(
-                "products-search",
-                endpoint=SEARCH_ENDPOINT,
-                index_name=PRD_INDEX,
-                credential=credential,
-                mode="semantic",
-                semantic_configuration_name="default",
-            ) as products_search,
-        ):
-            router = Agent(client=client, instructions=ROUTER_INSTRUCTIONS)
-            specialists = {
-                "hr": Agent(client=client, context_providers=[hr_search], instructions=HR_INSTRUCTIONS),
-                "marketing": Agent(client=client, context_providers=[marketing_search], instructions=MARKETING_INSTRUCTIONS),
-                "products": Agent(client=client, context_providers=[products_search], instructions=PRODUCTS_INSTRUCTIONS),
-            }
-            route = await route_query(router, query)
-            resp = await specialists[route].run(user_message(query))
-            return route, resp.text or "", []
+        self._hr_search = AzureAISearchContextProvider(
+            "hr-search", endpoint=SEARCH_ENDPOINT, index_name=HR_INDEX,
+            credential=self._credential, mode="semantic", semantic_configuration_name="default",
+        )
+        self._marketing_search = AzureAISearchContextProvider(
+            "marketing-search", endpoint=SEARCH_ENDPOINT, index_name=MKT_INDEX,
+            credential=self._credential, mode="semantic", semantic_configuration_name="default",
+        )
+        self._products_search = AzureAISearchContextProvider(
+            "products-search", endpoint=SEARCH_ENDPOINT, index_name=PRD_INDEX,
+            credential=self._credential, mode="semantic", semantic_configuration_name="default",
+        )
+        self.router = Agent(client=self._client, instructions=ROUTER_INSTRUCTIONS)
+        self.specialists = {
+            "hr": Agent(client=self._client, context_providers=[self._hr_search], instructions=HR_INSTRUCTIONS),
+            "marketing": Agent(client=self._client, context_providers=[self._marketing_search], instructions=MARKETING_INSTRUCTIONS),
+            "products": Agent(client=self._client, context_providers=[self._products_search], instructions=PRODUCTS_INSTRUCTIONS),
+        }
+
+    async def stop(self):
+        if self._credential:
+            await self._credential.close()
+
+
+_state: OrchestratorState | None = None
+
+
+async def get_state() -> OrchestratorState:
+    global _state
+    if _state is None:
+        _state = OrchestratorState()
+        await _state.start()
+    return _state
+
+
+async def startup():
+    await get_state()
+
+
+async def shutdown():
+    global _state
+    if _state:
+        await _state.stop()
+        _state = None
+
+
+async def run_single_query(query: str) -> tuple[str, str, list]:
+    """Single-shot query for the FastAPI endpoint. Uses singleton state."""
+    state = await get_state()
+    route = await route_query(state.router, query)
+    resp = await state.specialists[route].run(user_message(query))
+    return route, resp.text or "", []
 
 
 async def run_orchestrator():
