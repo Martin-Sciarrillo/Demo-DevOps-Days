@@ -5,7 +5,15 @@ Simple FastAPI wrapper around the orchestrator.
 """
 
 import os
+import sys
+from pathlib import Path
 from contextlib import asynccontextmanager
+from dotenv import load_dotenv
+
+# Load .env from repo root and add agents/ to path so 'config' module is findable
+_root = Path(__file__).resolve().parents[2]
+load_dotenv(_root / ".env")
+sys.path.insert(0, str(Path(__file__).resolve().parent / "agents"))
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
