@@ -1,147 +1,170 @@
-# FoundryIQ and Agent Framework Demo
+# Demo DevOps Days — Multi-Agent Orchestration con Azure AI
 
 > Demo presentada en **DevOps Days** por [Martin Sciarrillo](https://github.com/Martin-Sciarrillo)
 
-A multi-agent orchestration demo using Microsoft Agent Framework SDK and Azure AI Foundry with FoundryIQ Knowledge Bases for grounded retrieval.
+Demo de orquestación multi-agente usando el **Microsoft Agent Framework SDK** y **Azure AI Search** con búsqueda semántica. Simula un asistente interno de DevOps Days CORP que un ingeniero de guardia puede consultar a las 2am para resolver incidentes.
 
-![Demo Screenshot](docs/demo-screenshot.png)
+## Qué hace la demo
 
-## Features
-
-- **Multi-Agent Orchestration**: Intelligent routing of queries to specialized agents (HR, Products, Marketing)
-- **Microsoft Agent Framework SDK**: Built on the official `agent-framework` Python SDK
-- **FoundryIQ Knowledge Bases**: Agentic retrieval mode with gpt-4.1 for grounded responses
-- **RBAC-Only Authentication**: No API keys - uses DefaultAzureCredential for all services
-- **Fully Automated Deployment**: Infrastructure as Code with Bicep + setup scripts
-
-## Architecture
+Un **agente orquestador** recibe la pregunta del usuario, decide a qué especialista enviarla y devuelve una respuesta fundamentada en la base de conocimiento correspondiente:
 
 ```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                              User Query                                       │
-│                    "What is the PTO policy?"                                  │
-└─────────────────────────────────┬────────────────────────────────────────────┘
-                                  │
-                                  ▼
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                         ORCHESTRATOR AGENT                                    │
-│                                                                               │
-│   • Analyzes user intent                                                      │
-│   • Routes to appropriate specialist agent                                    │
-│   • Returns grounded response with citations                                  │
-└───────────┬─────────────────────┬─────────────────────┬──────────────────────┘
-            │                     │                     │
-            ▼                     ▼                     ▼
-┌───────────────────┐  ┌───────────────────┐  ┌───────────────────┐
-│    HR AGENT       │  │  MARKETING AGENT  │  │  PRODUCTS AGENT   │
-│                   │  │                   │  │                   │
-│ kb1-hr            │  │ kb2-marketing     │  │ kb3-products      │
-│ • PTO policies    │  │ • Campaigns       │  │ • Product catalog │
-│ • Benefits        │  │ • Brand guidelines│  │ • Specifications  │
-│ • Handbook        │  │ • Analytics       │  │ • Pricing         │
-└─────────┬─────────┘  └─────────┬─────────┘  └─────────┬─────────┘
-          │                      │                      │
-          ▼                      ▼                      ▼
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                         MICROSOFT FOUNDRY                                     │
-│  ┌────────────────────────────────────────────────────────────────────────┐  │
-│  │                    FOUNDRYIQ KNOWLEDGE BASES                            │  │
-│  │                                                                         │  │
-│  │  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐              │  │
-│  │  │   kb1-hr     │    │ kb2-marketing│    │ kb3-products │              │  │
-│  │  │  gpt-4.1     │    │  gpt-4.1     │    │  gpt-4.1     │              │  │
-│  │  └──────┬───────┘    └──────┬───────┘    └──────┬───────┘              │  │
-│  │         ▼                   ▼                   ▼                      │  │
-│  │  ┌───────────────────────────────────────────────────────────────┐     │  │
-│  │  │                    KNOWLEDGE SOURCES                           │     │  │
-│  │  │  HR:         ks-hr-sharepoint, ks-hr-aisearch, ks-hr-web      │     │  │
-│  │  │  Marketing:  ks-marketing, ks-blob-marketing, ks-marketing-web│     │  │
-│  │  │  Products:   ks-products, ks-products-onelake                 │     │  │
-│  │  └───────────────────────────────────────────────────────────────┘     │  │
-│  └────────────────────────────────────────────────────────────────────────┘  │
-└──────────────────────────────────────────────────────────────────────────────┘
+Pregunta del usuario
+        │
+        ▼
+┌───────────────────┐
+│    ORQUESTADOR    │  analiza el intent y enruta
+└──────┬────────────┘
+       │
+   ┌───┴──────────────────────┐
+   │                          │
+   ▼                          ▼                          ▼
+┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
+│ Agente Políticas │  │ Agente Runbooks  │  │ Agente Herram.   │
+│ Soporte & On-Call│  │ Ops SRE          │  │ Plataforma       │
+│                  │  │                  │  │                  │
+│ index-hr         │  │ index-marketing  │  │ index-products   │
+│ · On-call/guardia│  │ · Runbooks       │  │ · Kubernetes/EKS │
+│ · SLA/SLO        │  │ · Playbooks P1   │  │ · Terraform      │
+│ · Postmortem     │  │ · Troubleshooting│  │ · Vault/Grafana  │
+│ · Certificaciones│  │ · Alertas        │  │ · CI/CD/ArgoCD   │
+└──────────────────┘  └──────────────────┘  └──────────────────┘
+        │                      │                      │
+        └──────────────────────┴──────────────────────┘
+                               │
+                    Azure AI Search (semántico)
 ```
 
-## Prerequisites
+## Stack técnico
 
-- Azure subscription with Owner or Contributor + User Access Administrator
+| Capa | Tecnología |
+|------|-----------|
+| Agentes | Microsoft Agent Framework SDK (`agent-framework`, `agent-framework-openai`) |
+| LLM | Azure OpenAI `gpt-4o` vía `OpenAIChatCompletionClient` |
+| Retrieval | Azure AI Search — modo semántico (`AzureAISearchContextProvider`) |
+| Auth | `DefaultAzureCredential` — sin API keys, solo RBAC |
+| Backend | FastAPI + uvicorn |
+| Frontend | React (build estático servido por FastAPI) |
+
+## Bases de conocimiento
+
+| Índice | Agente | Contenido |
+|--------|--------|-----------|
+| `index-hr` | Políticas / Soporte & On-Call | Políticas de guardia, rotaciones, niveles de severidad, SLA/SLO, postmortem blameless, compensación, certificaciones |
+| `index-marketing` | Runbooks / Operaciones SRE | Runbooks operacionales: CPU alto, CrashLoopBackOff, rollback, DB lenta, latencia, disco, SSL, playbook P1 |
+| `index-products` | Herramientas / Plataforma | Catálogo de herramientas: Kubernetes/EKS, Terraform, Vault, Grafana+Prometheus, GitHub Actions, ArgoCD, Datadog, PagerDuty |
+
+## Requisitos previos
+
+- Suscripción Azure con rol **Owner** o **Contributor + User Access Administrator**
 - [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)
 - [Azure Developer CLI (azd)](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd)
-- [Python 3.11+](https://www.python.org/downloads/)
+- Python 3.11+
 
-## Quick Start
+## Setup
 
-### 1. Clone and Setup
+### 1. Clonar y crear entorno
 
 ```bash
 git clone https://github.com/Martin-Sciarrillo/Demo-DevOps-Days.git
 cd Demo-DevOps-Days
 
-# Create virtual environment
 python -m venv .venv
+
+# Windows
+.venv\Scripts\Activate.ps1
+
+# Linux/Mac
 source .venv/bin/activate
 
-# Install dependencies
 pip install -r requirements-dev.txt
 ```
 
-### 2. Deploy Infrastructure
+### 2. Desplegar infraestructura
 
 ```bash
 az login && azd auth login
 azd up
 ```
 
-### 3. Setup FoundryIQ Resources
+### 3. Crear índices y cargar datos
 
 ```bash
 ./scripts/setup_indexes.sh
 ./scripts/upload_sample_data.sh
-./scripts/setup_knowledge_sources.sh
-./scripts/setup_knowledge_bases.sh
 ```
 
-### 4. Configure Search RBAC (Manual)
+### 4. Configurar RBAC en Azure Search (manual)
 
-In Azure Portal: Search service → Keys → Set to **"Both"** (API keys + RBAC)
+En Azure Portal: **Search service → Keys → "Both"** (API keys + RBAC).
 
-### 5. Test the Orchestrator
+### 5. Configurar variables de entorno
+
+Crear un archivo `.env` en la raíz del repo:
+
+```env
+AZURE_OPENAI_ENDPOINT=https://<tu-recurso>.openai.azure.com/
+AZURE_SEARCH_ENDPOINT=https://<tu-recurso>.search.windows.net
+AZURE_OPENAI_DEPLOYMENT=gpt-4o
+```
+
+### 6. Correr la app
 
 ```bash
+cd app/backend
+uvicorn main:app --reload
+```
+
+Abrir [http://localhost:8000](http://localhost:8000).
+
+Al arrancar, uvicorn inicializa la conexión con Azure AD, el cliente OpenAI y los tres proveedores de búsqueda una sola vez — sin overhead por request.
+
+## Probar desde línea de comandos
+
+```bash
+# Activar venv primero
+.venv\Scripts\Activate.ps1
+
 python app/backend/agents/orchestrator.py
 ```
 
-Try: "What is the PTO policy?" or "Tell me about the fitness watch"
+Consultas de ejemplo:
+- `"¿Cuál es el procedimiento de escalado para un incidente P1?"`
+- `"¿Cómo resuelvo un CrashLoopBackOff en producción?"`
+- `"¿Qué herramienta usamos para gestión de secretos?"`
 
-## Project Structure
+## Estructura del proyecto
 
 ```
-├── app/backend/agents/
-│   ├── orchestrator.py      # Routes queries to specialists
-│   ├── hr_agent.py          # HR specialist → kb1-hr
-│   ├── products_agent.py    # Products specialist → kb3-products
-│   └── marketing_agent.py   # Marketing specialist → kb2-marketing
-├── infra/                   # Bicep IaC templates
-├── scripts/                 # Setup and deployment scripts
-└── docs/                    # Documentation
+├── app/
+│   └── backend/
+│       ├── main.py                  # FastAPI app + lifespan (warmup de agentes)
+│       ├── agents/
+│       │   ├── orchestrator.py      # Router + agentes especialistas + OrchestratorState
+│       │   ├── config.py            # Endpoints y nombres de índices
+│       │   ├── hr_agent.py          # Agente standalone de políticas
+│       │   ├── marketing_agent.py   # Agente standalone de runbooks
+│       │   └── products_agent.py    # Agente standalone de herramientas
+│       └── static/                  # Frontend React (build pre-compilado)
+├── infra/                           # Bicep IaC
+├── scripts/                         # Scripts de setup y despliegue
+│   ├── setup_indexes.sh
+│   ├── upload_sample_data.sh
+│   ├── setup_rbac.sh
+│   └── auth_init.sh / auth_init.ps1
+└── docs/
 ```
-
-## Knowledge Base Mapping
-
-| Agent | Knowledge Base | Content |
-|-------|----------------|---------|
-| HR | kb1-hr | PTO policies, benefits, handbook |
-| Products | kb3-products | Product catalog, specs, pricing |
-| Marketing | kb2-marketing | Campaigns, brand guidelines |
 
 ## Troubleshooting
 
-| Issue | Fix |
-|-------|-----|
-| 403 Forbidden | Portal → Search → Keys → "Both" |
-| Generic responses | Ensure context_provider passed to Agent |
-| KB errors | Run ./scripts/setup_rbac.sh |
+| Error | Solución |
+|-------|----------|
+| `403 Forbidden` en Search | Portal → Search → Keys → **"Both"** |
+| `ModuleNotFoundError: config` | Correr uvicorn desde `app/backend/`, no desde la raíz |
+| `ModuleNotFoundError: dotenv` | Activar el venv: `.venv\Scripts\Activate.ps1` |
+| Respuestas genéricas sin datos | Verificar que los índices tengan documentos (`setup_indexes.sh` + `upload_sample_data.sh`) |
+| Demora en primer request | Normal: es el warmup del token AAD. Desde el segundo request es más rápido. |
 
-## License
+## Licencia
 
-MIT License
+MIT
