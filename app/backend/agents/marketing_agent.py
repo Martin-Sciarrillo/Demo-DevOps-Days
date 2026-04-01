@@ -4,9 +4,9 @@ import asyncio
 from azure.identity.aio import DefaultAzureCredential
 
 from agent_framework import Agent, Message, Content
-from agent_framework.azure import AzureAIAgentClient, AzureAISearchContextProvider
+from agent_framework.azure import AzureOpenAIChatClient, AzureAISearchContextProvider
 
-from config import SEARCH_ENDPOINT, PROJECT_ENDPOINT, MODEL, MKT_KB_NAME
+from config import OPENAI_ENDPOINT, SEARCH_ENDPOINT, MODEL, MKT_KB_NAME
 
 MARKETING_INSTRUCTIONS = """You are a Marketing Specialist Agent for Zava Corporation.
 Answer questions about marketing campaigns, brand guidelines, and marketing strategies using the knowledge base.
@@ -16,12 +16,8 @@ Be specific and cite sources when possible."""
 async def run_marketing_agent(query: str) -> str:
     """Run the Marketing agent with a query."""
     async with DefaultAzureCredential() as credential:
+        client = AzureOpenAIChatClient(endpoint=OPENAI_ENDPOINT, deployment_name=MODEL, credential=credential)
         async with (
-            AzureAIAgentClient(
-                project_endpoint=PROJECT_ENDPOINT,
-                model_deployment_name=MODEL,
-                credential=credential,
-            ) as client,
             AzureAISearchContextProvider(
                 endpoint=SEARCH_ENDPOINT,
                 knowledge_base_name=MKT_KB_NAME,

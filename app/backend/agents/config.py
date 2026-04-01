@@ -2,12 +2,15 @@
 
 import os
 
+OPENAI_ENDPOINT = os.getenv(
+    "AZURE_OPENAI_ENDPOINT",
+    "https://cog-jnlr3ry4yf2o6.openai.azure.com/",
+)
+
 SEARCH_ENDPOINT = os.getenv(
     "AZURE_SEARCH_ENDPOINT",
     "https://srch-jnlr3ry4yf2o6.search.windows.net",
 )
-
-PROJECT_ENDPOINT = os.getenv("AZURE_AI_PROJECT_ENDPOINT", "")
 
 MODEL = os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4o")
 

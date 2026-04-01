@@ -1,11 +1,13 @@
 import asyncio
+from dotenv import load_dotenv
+load_dotenv()
 from azure.identity.aio import DefaultAzureCredential
 
 from agent_framework import Agent, Message, Content
-from agent_framework.azure import AzureAIAgentClient, AzureAISearchContextProvider
+from agent_framework.azure import AzureOpenAIChatClient, AzureAISearchContextProvider
 
 from config import (
-    SEARCH_ENDPOINT, PROJECT_ENDPOINT, MODEL,
+    OPENAI_ENDPOINT, SEARCH_ENDPOINT, MODEL,
     HR_KB_NAME, MKT_KB_NAME, PRD_KB_NAME,
     HR_SOURCE_ID, MKT_SOURCE_ID, PRD_SOURCE_ID,
 )
@@ -50,12 +52,12 @@ async def route_query(router: Agent, query: str) -> str:
 
 async def run_orchestrator():
     async with DefaultAzureCredential() as credential:
+        client = AzureOpenAIChatClient(
+            endpoint=OPENAI_ENDPOINT,
+            deployment_name=MODEL,
+            credential=credential,
+        )
         async with (
-            AzureAIAgentClient(
-                project_endpoint=PROJECT_ENDPOINT,
-                model_deployment_name=MODEL,
-                credential=credential,
-            ) as client,
             AzureAISearchContextProvider(
                 HR_SOURCE_ID,
                 endpoint=SEARCH_ENDPOINT,
