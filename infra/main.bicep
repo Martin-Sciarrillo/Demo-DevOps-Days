@@ -27,7 +27,7 @@ param openAiLocation string
 param chatGptModelName string = 'gpt-4o'
 
 @description('Version of the chat GPT model')
-param chatGptModelVersion string = '2024-08-06'
+param chatGptModelVersion string = '2024-11-20'
 
 @description('Capacity of the chat GPT deployment')
 param chatGptDeploymentCapacity int = 30
@@ -85,7 +85,7 @@ module openAi 'core/ai/cognitiveservices.bicep' = {
           version: chatGptModelVersion
         }
         sku: {
-          name: 'GlobalStandard'
+          name: 'Standard'
           capacity: chatGptDeploymentCapacity
         }
       }

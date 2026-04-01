@@ -1,5 +1,7 @@
 # FoundryIQ and Agent Framework Demo
 
+> Demo presentada en **DevOps Days** por [Martin Sciarrillo](https://github.com/Martin-Sciarrillo)
+
 A multi-agent orchestration demo using Microsoft Agent Framework SDK and Azure AI Foundry with FoundryIQ Knowledge Bases for grounded retrieval.
 
 ![Demo Screenshot](docs/demo-screenshot.png)
@@ -72,8 +74,8 @@ A multi-agent orchestration demo using Microsoft Agent Framework SDK and Azure A
 ### 1. Clone and Setup
 
 ```bash
-git clone https://github.com/leyredelacalzada/FoundryIQ-and-Agent-Framework-demo.git
-cd FoundryIQ-and-Agent-Framework-demo
+git clone https://github.com/Martin-Sciarrillo/Demo-DevOps-Days.git
+cd Demo-DevOps-Days
 
 # Create virtual environment
 python -m venv .venv
