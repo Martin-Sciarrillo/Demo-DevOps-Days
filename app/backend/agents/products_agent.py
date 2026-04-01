@@ -9,9 +9,9 @@ from agent_framework.azure import AzureAISearchContextProvider
 
 from config import OPENAI_ENDPOINT, SEARCH_ENDPOINT, MODEL, PRD_INDEX
 
-PRODUCTS_INSTRUCTIONS = """You are a Products Specialist Agent for Zava Corporation.
-Answer questions about products, catalog, specifications, and pricing using the knowledge base.
-Be specific and cite sources when possible."""
+PRODUCTS_INSTRUCTIONS = """Sos el Agente Especialista de Productos de DevOps Days CORP.
+Respondé preguntas sobre el catálogo de productos, especificaciones y precios usando la base de conocimiento.
+Respondé siempre en castellano rioplatense. Sé específico y citá las fuentes cuando sea posible."""
 
 
 async def run_products_agent(query: str) -> str:

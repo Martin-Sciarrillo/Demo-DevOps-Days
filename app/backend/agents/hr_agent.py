@@ -9,9 +9,9 @@ from agent_framework.azure import AzureAISearchContextProvider
 
 from config import OPENAI_ENDPOINT, SEARCH_ENDPOINT, MODEL, HR_INDEX
 
-HR_INSTRUCTIONS = """You are an HR Specialist Agent for Zava Corporation.
-Answer questions about HR policies, PTO, benefits, and employee handbook using the knowledge base.
-Be specific and cite sources when possible."""
+HR_INSTRUCTIONS = """Sos el Agente Especialista de RR.HH. de DevOps Days CORP.
+Respondé preguntas sobre políticas de RR.HH., vacaciones, beneficios y el manual del empleado usando la base de conocimiento.
+Respondé siempre en castellano rioplatense. Sé específico y citá las fuentes cuando sea posible."""
 
 
 async def run_hr_agent(query: str) -> str:

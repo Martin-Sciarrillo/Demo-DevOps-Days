@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# Upload Sample Data to Search Indexes
-# Populates indexes with Zava e-commerce sample data
+# Subir Datos de Muestra a los Índices de Búsqueda
+# Carga los índices con datos de muestra de DevOps Days CORP
 #
 
 set -e
@@ -42,58 +42,58 @@ HR_DOCS='{
         {
             "@search.action": "upload",
             "id": "hr-001",
-            "title": "Remote Work Policy",
-            "category": "Policies",
-            "content": "Zava Remote Work Policy: Employees may work remotely up to 3 days per week with manager approval. Core collaboration hours are 10 AM - 3 PM in your local timezone. Equipment stipend of $500 provided for home office setup. VPN required for all remote access. Quarterly in-person team meetings are mandatory."
+            "title": "Política de Trabajo Remoto",
+            "category": "Políticas",
+            "content": "Política de Trabajo Remoto de DevOps Days CORP: Los empleados pueden trabajar de forma remota hasta 3 días por semana con aprobación del manager. Las horas de colaboración core son de 10 a 15 hs en tu zona horaria local. Se otorga un subsidio de $500 para equipamiento del home office. VPN obligatoria para todo acceso remoto. Las reuniones presenciales trimestrales son obligatorias."
         },
         {
             "@search.action": "upload",
             "id": "hr-002",
-            "title": "Health Benefits Overview",
-            "category": "Benefits",
-            "content": "Zava offers comprehensive health benefits: Medical (PPO and HMO options), Dental, Vision, and Mental Health coverage. Company pays 85% of premiums for employees, 60% for dependents. FSA and HSA accounts available. Annual wellness stipend of $1,200. Free gym membership at partner locations."
+            "title": "Resumen de Beneficios de Salud",
+            "category": "Beneficios",
+            "content": "DevOps Days CORP ofrece beneficios de salud completos: cobertura médica (opciones PPO y HMO), odontológica, visual y salud mental. La empresa paga el 85% de las primas para empleados, el 60% para dependientes. Cuentas FSA y HSA disponibles. Subsidio anual de bienestar de $1.200. Membresía gratuita en gimnasios asociados."
         },
         {
             "@search.action": "upload",
             "id": "hr-003",
-            "title": "PTO and Leave Policy",
-            "category": "Leave",
-            "content": "Zava PTO Policy: 0-1 years: 15 days, 2-4 years: 20 days, 5+ years: 25 days, 10+ years: Unlimited with approval. Parental leave: 16 weeks fully paid. Bereavement: 5 days immediate family. Sick leave: Unlimited with documentation for 3+ consecutive days. Sabbatical: 4 weeks after 7 years of service."
+            "title": "Política de Vacaciones y Licencias",
+            "category": "Licencias",
+            "content": "Política de Vacaciones de DevOps Days CORP: 0-1 años: 15 días, 2-4 años: 20 días, 5+ años: 25 días, 10+ años: ilimitadas con aprobación. Licencia parental: 16 semanas con goce de sueldo. Duelo: 5 días para familia directa. Licencia por enfermedad: ilimitada con documentación para 3+ días consecutivos. Sabático: 4 semanas después de 7 años de antigüedad."
         },
         {
             "@search.action": "upload",
             "id": "hr-004",
-            "title": "Onboarding Guide",
-            "category": "Onboarding",
-            "content": "Welcome to Zava! Week 1: IT setup, HR paperwork, company overview. Week 2: Team introductions, role-specific training. Week 3: Buddy program pairing, first project assignment. Week 4: 30-day check-in with manager. All new hires receive ZavaBook Pro laptop, welcome kit, and branded swag."
+            "title": "Guía de Incorporación",
+            "category": "Incorporación",
+            "content": "¡Bienvenido/a a DevOps Days CORP! Semana 1: configuración de IT, papeleo de RR.HH., visión general de la empresa. Semana 2: presentaciones al equipo, capacitación del rol. Semana 3: asignación de buddy, primer proyecto. Semana 4: check-in de 30 días con el manager. Todos los nuevos ingresos reciben laptop DDBook Pro, kit de bienvenida y merchandising de la empresa."
         },
         {
             "@search.action": "upload",
             "id": "hr-005",
-            "title": "Performance Review Process",
-            "category": "Performance",
-            "content": "Zava conducts bi-annual performance reviews in Q1 and Q3. Self-assessment due 2 weeks before review. 360 feedback collected from peers and cross-functional partners. Rating scale: Exceeds (5), Meets+ (4), Meets (3), Developing (2), Below (1). Compensation adjustments tied to Q1 review. Development plans created in Q3 review."
+            "title": "Proceso de Evaluación de Desempeño",
+            "category": "Desempeño",
+            "content": "DevOps Days CORP realiza evaluaciones de desempeño dos veces al año en Q1 y Q3. La autoevaluación se entrega 2 semanas antes. Se recopila feedback 360 de pares y socios interfuncionales. Escala: Supera expectativas (5), Cumple+ (4), Cumple (3), En desarrollo (2), Por debajo (1). Los ajustes salariales se vinculan a la revisión de Q1. Los planes de desarrollo se crean en Q3."
         },
         {
             "@search.action": "upload",
             "id": "hr-006",
-            "title": "Stock Options and Equity",
-            "category": "Compensation",
-            "content": "Zava equity program: New hire grants vest over 4 years with 1-year cliff. Annual refresh grants based on performance (typically 25-50% of initial grant). Exercise window: 90 days post-departure for unvested, 10 years for vested. Stock options valued at latest 409A valuation. Equity refreshes awarded in February."
+            "title": "Opciones sobre Acciones y Equity",
+            "category": "Compensación",
+            "content": "Programa de equity de DevOps Days CORP: los grants de nuevos ingresos se consolidan en 4 años con cliff de 1 año. Los grants de actualización anual se basan en el desempeño (típicamente 25-50% del grant inicial). Ventana de ejercicio: 90 días post-salida para no consolidadas, 10 años para consolidadas. Las opciones se valúan a la última valuación 409A. Los refrescos de equity se otorgan en febrero."
         },
         {
             "@search.action": "upload",
             "id": "hr-007",
-            "title": "Learning and Development",
-            "category": "Development",
-            "content": "Professional development at Zava: $5,000 annual learning budget per employee. Access to LinkedIn Learning, Coursera, and internal Zava Academy. Conference attendance: Up to 2 conferences per year. Internal mobility program: Explore new roles after 18 months. Mentorship matching program available."
+            "title": "Aprendizaje y Desarrollo",
+            "category": "Desarrollo",
+            "content": "Desarrollo profesional en DevOps Days CORP: presupuesto de aprendizaje de $5.000 anuales por empleado. Acceso a LinkedIn Learning, Coursera y la Academia interna de DevOps Days CORP. Asistencia a conferencias: hasta 2 por año. Programa de movilidad interna: explorá nuevos roles después de 18 meses. Programa de mentorías disponible."
         },
         {
             "@search.action": "upload",
             "id": "hr-008",
-            "title": "Company Holidays 2026",
-            "category": "Leave",
-            "content": "Zava 2026 Holiday Schedule: New Year Day (Jan 1), MLK Day (Jan 19), Presidents Day (Feb 16), Memorial Day (May 25), Independence Day (Jul 3-4), Labor Day (Sep 7), Thanksgiving (Nov 26-27), Winter Break (Dec 24-31). Floating holidays: 2 days to use anytime. Office closed Dec 24 - Jan 1."
+            "title": "Feriados de la Empresa 2026",
+            "category": "Licencias",
+            "content": "Feriados 2026 de DevOps Days CORP: Año Nuevo (1 ene), Día del Trabajo (1 may), 25 de Mayo (25 may), 9 de Julio (9 jul), Día de la Raza (12 oct), Inmaculada Concepción (8 dic), Navidad (25 dic), Fin de año (31 dic). Feriados flotantes: 2 días a usar cuando quieras. Oficina cerrada del 24 dic al 1 ene."
         }
     ]
 }'
@@ -104,58 +104,58 @@ PRODUCTS_DOCS='{
         {
             "@search.action": "upload",
             "id": "prod-001",
-            "title": "ZavaBook Pro 16\"",
+            "title": "DDBook Pro 16\"",
             "category": "Laptops",
-            "content": "ZavaBook Pro 16-inch: M4 Pro chip, 18-core CPU, 16GB unified memory, 512GB SSD. 16.2-inch Liquid Retina XDR display, 3456x2234 resolution. 22-hour battery life. MagSafe 3, 3x Thunderbolt 4, HDMI, SD card slot. Price: $1,899.99. Stock: 450 units. SKU: ZBP-2026-PRO. Best for creative professionals and developers."
+            "content": "DDBook Pro 16 pulgadas: chip M4 Pro, CPU de 18 núcleos, 16GB de memoria unificada, SSD 512GB. Pantalla Liquid Retina XDR de 16,2 pulgadas, resolución 3456x2234. Batería de 22 horas. MagSafe 3, 3x Thunderbolt 4, HDMI, ranura SD. Precio: $1.899,99. Stock: 450 unidades. SKU: ZBP-2026-PRO. Ideal para creativos y desarrolladores."
         },
         {
             "@search.action": "upload",
             "id": "prod-002",
-            "title": "SoundMax Elite Headphones",
+            "title": "Auriculares SoundMax Elite",
             "category": "Audio",
-            "content": "SoundMax Elite wireless over-ear headphones: Active noise cancellation with 3 modes. 40mm custom drivers, 20Hz-40kHz frequency response. 30-hour battery, quick charge (10 min = 3 hours). Bluetooth 5.3, multipoint connection. Foldable design, premium memory foam cushions. Price: $349.99. Stock: 1,200 units. SKU: SMX-ELITE-BLK."
+            "content": "Auriculares inalámbricos SoundMax Elite: cancelación activa de ruido con 3 modos. Drivers de 40mm, respuesta de frecuencia 20Hz-40kHz. Batería de 30 horas, carga rápida (10 min = 3 horas). Bluetooth 5.3, conexión multipunto. Diseño plegable, almohadillas de espuma viscoelástica premium. Precio: $349,99. Stock: 1.200 unidades. SKU: SMX-ELITE-BLK."
         },
         {
             "@search.action": "upload",
             "id": "prod-003",
             "title": "ProFit Watch Series 5",
             "category": "Wearables",
-            "content": "ProFit Watch Series 5: Advanced health monitoring with ECG, blood oxygen, continuous heart rate. Built-in GPS, cellular option. 45mm case, always-on AMOLED display. 5ATM water resistance, swim tracking. Sleep analysis with smart alarm. 18-hour battery. Price: $299.99 (GPS), $399.99 (Cellular). Stock: 800 units."
+            "content": "ProFit Watch Series 5: monitoreo de salud avanzado con ECG, oxígeno en sangre y frecuencia cardíaca continua. GPS integrado, opción celular. Caja de 45mm, pantalla AMOLED siempre encendida. Resistencia al agua 5ATM, seguimiento de natación. Análisis de sueño con alarma inteligente. Batería de 18 horas. Precio: $299,99 (GPS), $399,99 (Celular). Stock: 800 unidades."
         },
         {
             "@search.action": "upload",
             "id": "prod-004",
-            "title": "ZavaTab Pro 12.9\"",
+            "title": "DDTab Pro 12.9\"",
             "category": "Tablets",
-            "content": "ZavaTab Pro 12.9-inch tablet: M3 chip, 8GB RAM, 256GB storage. 12.9-inch Liquid Retina XDR, ProMotion 120Hz. Face ID, USB-C with Thunderbolt. Compatible with ZavaPencil Pro and Magic Keyboard. 10-hour battery. Price: $1,099.99. Stock: 600 units. SKU: ZTP-129-M3. Perfect for artists and mobile professionals."
+            "content": "Tablet DDTab Pro 12,9 pulgadas: chip M3, 8GB de RAM, 256GB de almacenamiento. Liquid Retina XDR de 12,9 pulgadas, ProMotion 120Hz. Face ID, USB-C con Thunderbolt. Compatible con DDPencil Pro y Magic Keyboard. Batería de 10 horas. Precio: $1.099,99. Stock: 600 unidades. SKU: ZTP-129-M3. Perfecta para artistas y profesionales móviles."
         },
         {
             "@search.action": "upload",
             "id": "prod-005",
-            "title": "ZavaKeys Wireless Keyboard",
-            "category": "Accessories",
-            "content": "ZavaKeys wireless mechanical keyboard: Low-profile switches, tactile feedback. RGB backlit with customizable zones. Bluetooth + 2.4GHz dongle. Multi-device switching (up to 3). Rechargeable, 200-hour battery. Aluminum frame, compact tenkeyless layout. Price: $129.99. Stock: 2,500 units. SKU: ZK-WL-TKL."
+            "title": "DDKeys Wireless Keyboard",
+            "category": "Accesorios",
+            "content": "Teclado mecánico inalámbrico DDKeys: switches de perfil bajo, feedback táctil. Retroiluminación RGB con zonas personalizables. Bluetooth + dongle 2.4GHz. Cambio entre dispositivos (hasta 3). Recargable, batería de 200 horas. Marco de aluminio, diseño compacto tenkeyless. Precio: $129,99. Stock: 2.500 unidades. SKU: ZK-WL-TKL."
         },
         {
             "@search.action": "upload",
             "id": "prod-006",
-            "title": "PowerMax 100W Charger",
-            "category": "Accessories",
-            "content": "PowerMax 100W GaN charger: 4 ports (2x USB-C PD, 2x USB-A). Charges laptop, phone, tablet, watch simultaneously. Foldable prongs, travel-friendly. Universal voltage 100-240V. Smart power distribution. Price: $79.99. Stock: 4,000 units. SKU: PM-100W-4P. Compact and powerful for all your devices."
+            "title": "Cargador PowerMax 100W",
+            "category": "Accesorios",
+            "content": "Cargador GaN PowerMax 100W: 4 puertos (2x USB-C PD, 2x USB-A). Carga laptop, teléfono, tablet y reloj al mismo tiempo. Clavijas plegables, ideal para viajes. Voltaje universal 100-240V. Distribución inteligente de energía. Precio: $79,99. Stock: 4.000 unidades. SKU: PM-100W-4P. Compacto y potente para todos tus dispositivos."
         },
         {
             "@search.action": "upload",
             "id": "prod-007",
-            "title": "ZavaCam 4K Pro",
-            "category": "Cameras",
-            "content": "ZavaCam 4K Pro webcam: 4K/30fps or 1080p/60fps. Auto-framing AI, background blur. Noise-canceling dual mics. Built-in privacy shutter. USB-C plug and play. Works with Zoom, Teams, Google Meet. Field of view: 90-degree adjustable. Price: $199.99. Stock: 1,800 units. SKU: ZC-4K-PRO. Studio quality for remote work."
+            "title": "DDCam 4K Pro",
+            "category": "Cámaras",
+            "content": "Webcam DDCam 4K Pro: 4K/30fps o 1080p/60fps. Encuadre automático con IA, desenfoque de fondo. Doble micrófono con cancelación de ruido. Obturador de privacidad integrado. USB-C plug and play. Compatible con Zoom, Teams, Google Meet. Campo visual: ajustable a 90 grados. Precio: $199,99. Stock: 1.800 unidades. SKU: ZC-4K-PRO. Calidad de estudio para el trabajo remoto."
         },
         {
             "@search.action": "upload",
             "id": "prod-008",
-            "title": "ZavaPods Ultra",
+            "title": "DDPods Ultra",
             "category": "Audio",
-            "content": "ZavaPods Ultra true wireless earbuds: Adaptive ANC, transparency mode. 6-hour battery, 30 hours with case. Spatial audio with head tracking. IPX4 sweat resistance. Touch controls, Hey Zava voice activation. Custom EQ in app. Price: $249.99. Stock: 3,500 units. SKU: ZPU-2026-WHT. Immersive sound, all-day comfort."
+            "content": "Auriculares inalámbricos DDPods Ultra: ANC adaptativa, modo de transparencia. Batería de 6 horas, 30 horas con estuche. Audio espacial con seguimiento de cabeza. Resistencia al sudor IPX4. Controles táctiles, activación por voz Hey DevOps. EQ personalizable en la app. Precio: $249,99. Stock: 3.500 unidades. SKU: ZPU-2026-WHT. Sonido envolvente, comodidad todo el día."
         }
     ]
 }'
@@ -166,58 +166,58 @@ MARKETING_DOCS='{
         {
             "@search.action": "upload",
             "id": "mkt-001",
-            "title": "Summer Sale 2026 Campaign",
-            "category": "Campaigns",
-            "content": "Summer Sale 2026 runs June 15 - July 15. Discounts: Electronics 20-30% off, Fashion 25-40% off, Home 15-25% off. Promotional codes: SUMMER20 (20% off $100+), SUMMER30 (30% off $200+). Email blast schedule: June 14 teaser, June 15 launch, June 22 mid-campaign, July 10 last chance. Target: $5M revenue, 50K new customers."
+            "title": "Campaña de Verano 2026",
+            "category": "Campañas",
+            "content": "La Campaña de Verano 2026 va del 15 de junio al 15 de julio. Descuentos: Electrónica 20-30% off, Moda 25-40% off, Hogar 15-25% off. Códigos promocionales: VERANO20 (20% off en compras +$100), VERANO30 (30% off en compras +$200). Calendario de emails: 14 jun teaser, 15 jun lanzamiento, 22 jun mid-campaign, 10 jul última oportunidad. Objetivo: $5M de ingresos, 50.000 nuevos clientes."
         },
         {
             "@search.action": "upload",
             "id": "mkt-002",
-            "title": "Holiday Campaign Strategy",
-            "category": "Campaigns",
-            "content": "Holiday 2026 Campaign: Theme \"Give the Gift of Innovation\". Black Friday (Nov 27): 40% off sitewide. Cyber Monday (Nov 30): Tech deals focus. 12 Days of Deals (Dec 13-24). Gift guides: Tech Lover, Home Chef, Fitness Fan, Budget-Friendly. Influencer partnerships: 25 creators, unboxing content. Budget: $2M total spend."
+            "title": "Estrategia de Campaña de Fin de Año",
+            "category": "Campañas",
+            "content": "Campaña de Fin de Año 2026: Tema \"Regalá Innovación\". Black Friday (27 nov): 40% off en todo el sitio. Cyber Monday (30 nov): foco en tecnología. 12 Días de Ofertas (13-24 dic). Guías de regalos: Amante de la Tecnología, Chef en Casa, Fan del Fitness, Económico. Alianzas con influencers: 25 creadores, contenido de unboxing. Presupuesto total: $2M."
         },
         {
             "@search.action": "upload",
             "id": "mkt-003",
-            "title": "Brand Guidelines 2026",
-            "category": "Brand",
-            "content": "Zava Brand Guidelines: Primary color Zava Blue (#0066CC), secondary Electric Orange (#FF6600). Typography: Zava Sans for headlines, Inter for body. Voice: Friendly, innovative, trustworthy. Logo clear space: 2x height of Z. Never distort, recolor, or add effects to logo. Photography style: Clean, lifestyle-focused, diverse representation."
+            "title": "Lineamientos de Marca 2026",
+            "category": "Marca",
+            "content": "Lineamientos de Marca DevOps Days CORP: color primario DD Blue (#0066CC), secundario Electric Orange (#FF6600). Tipografía: DD Sans para títulos, Inter para cuerpo. Voz de marca: amigable, innovadora, confiable. Espacio libre del logo: 2x la altura del ícono. Nunca distorsionar, recolorear ni agregar efectos al logo. Estilo fotográfico: limpio, lifestyle, representación diversa."
         },
         {
             "@search.action": "upload",
             "id": "mkt-004",
-            "title": "Social Media Playbook",
+            "title": "Manual de Redes Sociales",
             "category": "Social",
-            "content": "Zava Social Media Guidelines: Instagram (2x daily, visual product focus). TikTok (3x daily, trends and behind-scenes). Twitter/X (4x daily, news and support). LinkedIn (1x daily, company culture and B2B). YouTube (2x weekly, tutorials and reviews). Response time: 2 hours for complaints, 24 hours for general. Hashtags: #ZavaLife #ZavaTech."
+            "content": "Lineamientos de Redes Sociales de DevOps Days CORP: Instagram (2 publicaciones diarias, foco visual en productos). TikTok (3 diarias, tendencias y behind the scenes). Twitter/X (4 diarias, novedades y soporte). LinkedIn (1 diaria, cultura y B2B). YouTube (2 semanales, tutoriales y reseñas). Tiempo de respuesta: 2 horas para quejas, 24 horas en general. Hashtags: #DevOpsDaysLife #DevOpsDaysTech."
         },
         {
             "@search.action": "upload",
             "id": "mkt-005",
-            "title": "Email Marketing Metrics Q4 2025",
-            "category": "Analytics",
-            "content": "Q4 2025 Email Performance: Sent 12.5M emails, 22.3% open rate (industry avg 19.8%), 3.8% CTR (industry avg 2.6%), 0.4% conversion rate. Top performing: Black Friday (45% open rate), Product Launch (38% open rate). Revenue attributed: $4.2M. Unsubscribe rate: 0.2%. Best send time: Tuesday 10 AM EST."
+            "title": "Métricas de Email Marketing Q4 2025",
+            "category": "Analítica",
+            "content": "Desempeño de Email Q4 2025: 12,5M de emails enviados, tasa de apertura 22,3% (promedio industria 19,8%), CTR 3,8% (promedio 2,6%), tasa de conversión 0,4%. Los más exitosos: Black Friday (45% apertura), Lanzamiento de Producto (38% apertura). Ingresos atribuidos: $4,2M. Tasa de baja: 0,2%. Mejor horario de envío: martes a las 10 hs EST."
         },
         {
             "@search.action": "upload",
             "id": "mkt-006",
-            "title": "Influencer Partnership Program",
-            "category": "Partnerships",
-            "content": "Zava Influencer Program 2026: Tier 1 (1M+ followers): 15% commission, free products, exclusive access. Tier 2 (100K-1M): 10% commission, quarterly products. Micro (10K-100K): 8% commission, performance bonuses. Current roster: 47 Tier 1, 312 Tier 2, 1,847 micro. Q4 2025 influencer revenue: $4.2M. Top category: Electronics (TechTubers)."
+            "title": "Programa de Influencers",
+            "category": "Alianzas",
+            "content": "Programa de Influencers 2026 de DevOps Days CORP: Tier 1 (+1M seguidores): 15% de comisión, productos gratuitos, acceso exclusivo. Tier 2 (100K-1M): 10% de comisión, productos trimestrales. Micro (10K-100K): 8% de comisión, bonos por desempeño. Plantel actual: 47 Tier 1, 312 Tier 2, 1.847 micro. Ingresos por influencers Q4 2025: $4,2M. Categoría líder: Electrónica (TechTubers)."
         },
         {
             "@search.action": "upload",
             "id": "mkt-007",
-            "title": "Competitor Analysis 2026",
-            "category": "Research",
-            "content": "Competitive Landscape 2026: Amazon - Leader in delivery speed, Prime ecosystem. Best Buy - Strong in-store experience, Geek Squad services. Walmart - Price leader, grocery crossover. Zava differentiation: Superior customer service (89% satisfaction), curated product selection, exclusive brands, loyalty rewards. Market share: 8.2% (up from 6.7% in 2025)."
+            "title": "Análisis de Competencia 2026",
+            "category": "Investigación",
+            "content": "Competitive Landscape 2026: Amazon - Leader in delivery speed, Prime ecosystem. Best Buy - Strong in-store experience, Geek Squad services. Walmart - Price leader, grocery crossover. Diferenciación de DevOps Days CORP: Superior customer service (89% satisfaction), curated product selection, exclusive brands, loyalty rewards. Market share: 8.2% (up from 6.7% in 2025)."
         },
         {
             "@search.action": "upload",
             "id": "mkt-008",
-            "title": "Content Calendar Q1 2026",
-            "category": "Content",
-            "content": "Q1 2026 Content Plan: January - New Year New Gear (Jan 2-15), CES coverage, Winter Clearance (Jan 16-31). February - Valentine Gift Guide (Feb 1-14), Presidents Day Sale (Feb 15-19). March - Spring Refresh (Mar 1-15), St Patricks Flash Sale (Mar 17). Blogs: 3x weekly (Mon reviews, Wed how-tos, Fri trends). Video: 4 YouTube/month, 20 TikTok/week."
+            "title": "Calendario de Contenidos Q1 2026",
+            "category": "Contenido",
+            "content": "Plan de Contenidos Q1 2026: Enero - "Año Nuevo, Tech Nueva" (2-15 ene), cobertura CES, Liquidación de Verano (16-31 ene). Febrero - Guía de Regalos para San Valentín (1-14 feb), Venta de Presidentes (15-19 feb). Marzo - Renovación de Otoño (1-15 mar), Flash Sale del 17 de Marzo. Blogs: 3 semanales (lunes reseñas, miércoles how-tos, viernes tendencias). Video: 4 YouTube/mes, 20 TikTok/semana."
         }
     ]
 }'
@@ -228,30 +228,30 @@ SHAREPOINT_HR_DOCS='{
         {
             "@search.action": "upload",
             "id": "sp-hr-001",
-            "title": "Promotion Guidelines",
-            "category": "HR Policy",
-            "content": "ZAVA PROMOTION GUIDELINES. Eligibility: Minimum 12 months in current role, Meets/Exceeds performance rating in last 2 cycles, manager recommendation. Promotion Cycles: Q1 Engineering/Product/Design, Q2 Sales/Marketing, Q3 Operations/Customer Success, Q4 All departments (exceptional). Compensation: IC Level 10-15% increase, Management transition 15-20%. Career Ladder: IC Track (Associate → IC → Senior → Staff → Principal → Distinguished), Management Track (Manager → Director → VP → C-Level)."
+            "title": "Criterios de Promoción",
+            "category": "Política de RR.HH.",
+            "content": "CRITERIOS DE PROMOCIÓN DE DEVOPS DAYS CORP. Requisitos: mínimo 12 meses en el rol actual, calificación Cumple o Supera en los últimos 2 ciclos, recomendación del manager. Ciclos de promoción: Q1 Ingeniería/Producto/Diseño, Q2 Ventas/Marketing, Q3 Operaciones/Customer Success, Q4 todos los departamentos (excepcional). Compensación: nivel IC 10-15% de aumento, transición a gestión 15-20%. Carrera: Track IC (Asociado→IC→Senior→Staff→Principal→Distinguished), Track Gestión (Manager→Director→VP→C-Level)."
         },
         {
             "@search.action": "upload",
             "id": "sp-hr-002",
-            "title": "PTO Allowance Details",
-            "category": "HR Policy",
-            "content": "ZAVA DETAILED PTO POLICY. By Tenure: 0-1 years 15 days, 2-4 years 20 days, 5-9 years 25 days, 10+ years Unlimited with approval. Additional Leave: Parental 16 weeks paid, Bereavement 5 days immediate family, Jury Duty paid, Volunteer 2 days/year, Sabbatical 4 weeks after 7 years. Request Process: Submit via Workday 2 weeks advance, manager approval within 48 hours. Blackout periods: Last 2 weeks of quarter for customer-facing teams. Carryover: Max 5 days to following year, must use by March 31."
+            "title": "Detalle de Política de Vacaciones",
+            "category": "Política de RR.HH.",
+            "content": "POLÍTICA DETALLADA DE VACACIONES DE DEVOPS DAYS CORP. Por antigüedad: 0-1 años 15 días, 2-4 años 20 días, 5-9 años 25 días, 10+ años ilimitadas con aprobación. Licencias adicionales: Parental 16 semanas pagas, Duelo 5 días familia directa, Deber cívico pago, Voluntariado 2 días/año, Sabático 4 semanas después de 7 años. Proceso de solicitud: enviar por Workday con 2 semanas de antelación, aprobación del manager en 48 horas. Períodos bloqueados: últimas 2 semanas del trimestre para equipos de cara al cliente. Transferencia: máx. 5 días al año siguiente, usarlos antes del 31 de marzo."
         },
         {
             "@search.action": "upload",
             "id": "sp-hr-003",
-            "title": "Compensation Bands 2026",
-            "category": "Compensation",
-            "content": "ZAVA COMPENSATION BANDS 2026. Engineering: L1 $80-100K, L2 $100-130K, L3 $130-170K, L4 $170-220K, L5 $220-280K. Product: Associate PM $85-105K, PM $110-140K, Senior PM $140-180K, Director $180-240K. Sales: SDR $50K base + $30K OTE, AE $80K + $80K OTE, Senior AE $100K + $150K OTE, Enterprise AE $120K + $200K OTE. Equity: 4-year vest, 1-year cliff, annual refresh based on performance. Geographic tiers: SF/NYC/Seattle base rate, Austin/Denver/Boston 90%, Remote other 80%."
+            "title": "Bandas Salariales 2026",
+            "category": "Compensación",
+            "content": "BANDAS SALARIALES 2026 DE DEVOPS DAYS CORP. Ingeniería: L1 $80-100K, L2 $100-130K, L3 $130-170K, L4 $170-220K, L5 $220-280K. Producto: PM Asociado $85-105K, PM $110-140K, PM Senior $140-180K, Director $180-240K. Ventas: SDR $50K base + $30K OTE, AE $80K + $80K OTE, AE Senior $100K + $150K OTE, AE Enterprise $120K + $200K OTE. Equity: consolidación en 4 años, cliff de 1 año, actualización anual según desempeño. Niveles geográficos: SF/NYC/Seattle tarifa base, Austin/Denver/Boston 90%, Remoto otros 80%."
         },
         {
             "@search.action": "upload",
             "id": "sp-hr-004",
-            "title": "Employee Handbook Summary",
+            "title": "Resumen del Manual del Empleado",
             "category": "General",
-            "content": "ZAVA EMPLOYEE HANDBOOK. Code of Conduct: Integrity, respect, protect confidential info, report conflicts of interest. Expenses: Travel per diem by city, meals up to $75/day, flights economy under 6hr or business 6+hr, hotels up to $250/night major metros. Equipment: MacBook Pro or Dell XPS choice, up to 2 monitors, headset and webcam provided. Remote Work: Hybrid 2 days in office minimum, fully remote quarterly gatherings required. Core hours 10AM-3PM for meetings. Social Media: Avoid discussing confidential info, only authorized spokespersons represent company."
+            "content": "MANUAL DEL EMPLEADO DE DEVOPS DAYS CORP. Código de Conducta: integridad, respeto, proteger información confidencial, reportar conflictos de interés. Gastos: viáticos por ciudad, comidas hasta $75/día, vuelos en turista hasta 6 hs o business en vuelos de 6+ hs, hoteles hasta $250/noche en grandes ciudades. Equipamiento: elección entre MacBook Pro o Dell XPS, hasta 2 monitores, auriculares y webcam provistos. Trabajo remoto: híbrido mínimo 2 días en oficina, encuentros trimestrales presenciales obligatorios. Horario core para reuniones: 10 a 15 hs. Redes sociales: evitar comentar información confidencial, solo portavoces autorizados representan a la empresa."
         }
     ]
 }'
@@ -271,15 +271,15 @@ mkdir -p /tmp/marketing-blob
 
 cat > /tmp/marketing-blob/influencer_partnerships.json << 'EOF'
 {
-  "title": "Zava Influencer Partnership Program 2026",
+  "title": "Programa de Influencers DevOps Days CORP 2026",
   "category": "influencer-marketing",
-  "content": "Zava's influencer partnership program connects with content creators across YouTube, TikTok, and Instagram. Tier 1 partners (1M+ followers) receive 15% commission on sales, free products, and exclusive early access. Tier 2 partners (100K-1M followers) receive 10% commission and quarterly product bundles. Micro-influencers (10K-100K) receive 8% commission with performance bonuses. Current active partnerships: 47 Tier 1, 312 Tier 2, 1,847 micro-influencers. Q4 2025 influencer-driven revenue: $4.2M. Top performing category: Electronics (ZavaBook Pro campaign with TechTuber generated 23,000 direct sales)."
+  "content": "de DevOps Days CORP influencer partnership program connects with content creators across YouTube, TikTok, and Instagram. Tier 1 partners (1M+ followers) receive 15% commission on sales, free products, and exclusive early access. Tier 2 partners (100K-1M followers) receive 10% commission and quarterly product bundles. Micro-influencers (10K-100K) receive 8% commission with performance bonuses. Current active partnerships: 47 Tier 1, 312 Tier 2, 1,847 micro-influencers. Q4 2025 influencer-driven revenue: $4.2M. Top performing category: Electronics (DDBook Pro campaign with TechTuber generated 23,000 direct sales)."
 }
 EOF
 
 cat > /tmp/marketing-blob/content_calendar_q1_2026.json << 'EOF'
 {
-  "title": "Q1 2026 Content Calendar",
+  "title": "Calendario de Contenidos Q1 2026",
   "category": "content-planning",
   "content": "January: New Year New Gear campaign (Jan 2-15), Winter Clearance (Jan 16-31). February: Valentine's Gift Guide (Feb 1-14), Presidents Day Sale (Feb 15-19), Spring Preview (Feb 20-28). March: Spring Forward Home Refresh (Mar 1-15), St. Patrick's Day Flash Sale (Mar 17), End of Quarter Push (Mar 20-31). Blog posts: 3x weekly (Monday product reviews, Wednesday how-tos, Friday trend roundups). Social media: 2x daily Instagram, 3x daily TikTok, 1x daily LinkedIn. Email cadence: 2x weekly promotional, 1x weekly newsletter. Video content: 4 YouTube reviews per month, 20 TikTok shorts per week."
 }
@@ -287,25 +287,25 @@ EOF
 
 cat > /tmp/marketing-blob/customer_testimonials.json << 'EOF'
 {
-  "title": "Featured Customer Testimonials",
+  "title": "Testimonios Destacados de Clientes",
   "category": "social-proof",
-  "content": "Sarah M., Austin TX: 'The ZavaBook Pro changed how I work remotely. Battery lasts all day and the display is gorgeous. 5 stars!' Rating: 5/5. James K., Seattle WA: 'Ordered the SoundMax headphones on Monday, arrived Wednesday. Noise cancellation is incredible for my commute.' Rating: 5/5. Maria L., Miami FL: 'Third time ordering from Zava. Customer service helped me with a return, no questions asked. Will keep coming back.' Rating: 5/5. David R., Chicago IL: 'The ProFit smartwatch tracks my workouts better than my old Fitbit. Heart rate accuracy is spot-on.' Rating: 4/5. Current NPS score: 72. Review response rate: 94% within 24 hours."
+  "content": "Sarah M., Austin TX: 'The DDBook Pro changed how I work remotely. Battery lasts all day and the display is gorgeous. 5 stars!' Rating: 5/5. James K., Seattle WA: 'Ordered the SoundMax headphones on Monday, arrived Wednesday. Noise cancellation is incredible for my commute.' Rating: 5/5. Maria L., Miami FL: 'Third time comprando en DevOps Days CORP. Customer service helped me with a return, no questions asked. Will keep coming back.' Rating: 5/5. David R., Chicago IL: 'The ProFit smartwatch tracks my workouts better than my old Fitbit. Heart rate accuracy is spot-on.' Rating: 4/5. Current NPS score: 72. Review response rate: 94% within 24 hours."
 }
 EOF
 
 cat > /tmp/marketing-blob/market_research_electronics.json << 'EOF'
 {
-  "title": "Consumer Electronics Market Research - January 2026",
+  "title": "Investigación de Mercado de Electrónica - Enero 2026",
   "category": "market-research",
-  "content": "Key findings from Zava's Q4 2025 consumer electronics survey (n=5,000). Purchase drivers: 1) Price (78%), 2) Reviews (71%), 3) Brand reputation (54%), 4) Free shipping (52%), 5) Return policy (48%). Emerging trends: Sustainable packaging influences 34% of Gen Z buyers. Wireless charging now expected as standard feature (up from 23% in 2024 to 67% in 2025). Average customer research time before purchase: 4.2 days for items over $200. Competitor analysis: Amazon leads in delivery speed, Best Buy in in-store experience, Zava leads in customer service satisfaction (89% vs industry average 71%). Recommended focus areas: Same-day delivery expansion, enhanced AR product previews."
+  "content": "Key findings from de DevOps Days CORP Q4 2025 consumer electronics survey (n=5,000). Purchase drivers: 1) Price (78%), 2) Reviews (71%), 3) Brand reputation (54%), 4) Free shipping (52%), 5) Return policy (48%). Emerging trends: Sustainable packaging influences 34% of Gen Z buyers. Wireless charging now expected as standard feature (up from 23% in 2024 to 67% in 2025). Average customer research time before purchase: 4.2 days for items over $200. Competitor analysis: Amazon leads in delivery speed, Best Buy in in-store experience, DevOps Days CORP lidera in customer service satisfaction (89% vs industry average 71%). Recommended focus areas: Same-day delivery expansion, enhanced AR product previews."
 }
 EOF
 
 cat > /tmp/marketing-blob/press_release_expansion.json << 'EOF'
 {
-  "title": "Press Release: Zava Announces European Expansion",
+  "title": "Comunicado de Prensa: DevOps Days CORP Anuncia Expansión Europea",
   "category": "press-release",
-  "content": "FOR IMMEDIATE RELEASE - January 15, 2026. Zava, the leading online marketplace for consumer electronics and lifestyle products, today announced its expansion into the European market with dedicated fulfillment centers in Dublin, Ireland and Rotterdam, Netherlands. The expansion will enable 2-day delivery to 90% of EU customers. 'This represents a major milestone in Zava's mission to deliver quality products globally,' said CEO Amanda Chen. Initial European catalog includes 50,000 SKUs with plans to reach 200,000 by end of 2026. The company will hire 500 employees across both locations. European operations expected to contribute 15% of total revenue by Q4 2026. Media contact: press@zava.com."
+  "content": "FOR IMMEDIATE RELEASE - January 15, 2026. DevOps Days CORP, el marketplace líder for consumer electronics and lifestyle products, today announced its expansion into the European market with dedicated fulfillment centers in Dublin, Ireland and Rotterdam, Netherlands. The expansion will enable 2-day delivery to 90% of EU customers. 'This represents a major milestone in de DevOps Days CORP mission to deliver quality products globally,' said CEO Amanda Chen. Initial European catalog includes 50,000 SKUs with plans to reach 200,000 by end of 2026. The company will hire 500 employees across both locations. European operations expected to contribute 15% of total revenue by Q4 2026. Media contact: prensa@devopsdays.corp."
 }
 EOF
 
