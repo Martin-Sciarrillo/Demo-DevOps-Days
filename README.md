@@ -4,8 +4,6 @@
 
 A multi-agent orchestration demo using Microsoft Agent Framework SDK and Azure AI Foundry with Azure AI Search for grounded retrieval. Simula un asistente interno que un ingeniero de guardia puede consultar para resolver incidentes.
 
-![Demo Screenshot](docs/demo-screenshot.png)
-
 ## Features
 
 - **Multi-Agent Orchestration**: Intelligent routing of queries to specialized agents (Políticas, Runbooks, Herramientas)
@@ -36,7 +34,7 @@ A multi-agent orchestration demo using Microsoft Agent Framework SDK and Azure A
 │  AGENTE POLÍTICAS │  │  AGENTE RUNBOOKS  │  │ AGENTE HERRAM.    │
 │  Soporte & On-Call│  │  Operaciones SRE  │  │ Plataforma        │
 │                   │  │                   │  │                   │
-│ index-hr          │  │ index-marketing   │  │ index-products    │
+│ index-politicas   │  │ index-runbooks    │  │ index-herramientas│
 │ • On-call/guardia │  │ • Runbooks ops    │  │ • Kubernetes/EKS  │
 │ • SLA/SLO         │  │ • Playbooks P1    │  │ • Terraform/Vault │
 │ • Postmortem      │  │ • Troubleshooting │  │ • CI/CD/ArgoCD    │
@@ -48,10 +46,10 @@ A multi-agent orchestration demo using Microsoft Agent Framework SDK and Azure A
 │  ┌────────────────────────────────────────────────────────────────────────┐  │
 │  │                    ÍNDICES (búsqueda semántica)                         │  │
 │  │                                                                         │  │
-│  │  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐              │  │
-│  │  │   index-hr   │    │index-marketing│    │index-products│              │  │
-│  │  │   gpt-4o     │    │   gpt-4o     │    │   gpt-4o     │              │  │
-│  │  └──────────────┘    └──────────────┘    └──────────────┘              │  │
+│  │  ┌──────────────┐    ┌──────────────┐    ┌───────────────────┐          │  │
+│  │  │index-politicas│   │index-runbooks│    │index-herramientas │          │  │
+│  │  │   gpt-4o     │    │   gpt-4o     │    │      gpt-4o       │          │  │
+│  │  └──────────────┘    └──────────────┘    └───────────────────┘          │  │
 │  └────────────────────────────────────────────────────────────────────────┘  │
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -148,9 +146,9 @@ Try: `"¿Cuál es el procedimiento de escalado para un P1?"` or `"¿Qué herrami
 
 | Agent | Index | Content |
 |-------|-------|---------|
-| Políticas (Soporte & On-Call) | index-hr | On-call policies, rotaciones, SLA/SLO, postmortem, certificaciones |
-| Runbooks (Operaciones SRE) | index-marketing | Runbooks operacionales, playbooks P1, troubleshooting paso a paso |
-| Herramientas (Plataforma) | index-products | Kubernetes/EKS, Terraform, Vault, Grafana, GitHub Actions, ArgoCD, Datadog, PagerDuty |
+| Políticas (Soporte & On-Call) | index-politicas | On-call policies, rotaciones, SLA/SLO, postmortem, certificaciones |
+| Runbooks (Operaciones SRE) | index-runbooks | Runbooks operacionales, playbooks P1, troubleshooting paso a paso |
+| Herramientas (Plataforma) | index-herramientas | Kubernetes/EKS, Terraform, Vault, Grafana, GitHub Actions, ArgoCD, Datadog, PagerDuty |
 
 ## Troubleshooting
 

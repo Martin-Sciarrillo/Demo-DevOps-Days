@@ -58,9 +58,8 @@ create_index() {
 }
 
 # Create all indexes
-create_index "index-hr" "HR policies, benefits, and employee information"
-create_index "index-products" "Product catalog with specifications and pricing"
-create_index "index-marketing" "Marketing campaigns, content, and analytics"
-create_index "index-hr-sharepoint" "HR documents from SharePoint"
+create_index "index-politicas" "Políticas de on-call, SLA/SLO, postmortem y certificaciones"
+create_index "index-herramientas" "Catálogo de herramientas internas: Kubernetes, Terraform, Vault, CI/CD"
+create_index "index-runbooks" "Runbooks operacionales, playbooks de incidentes y troubleshooting"
 
 log_success "All indexes created"

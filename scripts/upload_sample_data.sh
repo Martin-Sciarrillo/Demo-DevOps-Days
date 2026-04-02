@@ -257,10 +257,9 @@ SHAREPOINT_HR_DOCS='{
 }'
 
 # Upload all documents
-upload_docs "index-hr" "$HR_DOCS"
-upload_docs "index-products" "$PRODUCTS_DOCS"
-upload_docs "index-marketing" "$MARKETING_DOCS"
-upload_docs "index-hr-sharepoint" "$SHAREPOINT_HR_DOCS"
+upload_docs "index-politicas" "$HR_DOCS"
+upload_docs "index-herramientas" "$PRODUCTS_DOCS"
+upload_docs "index-runbooks" "$MARKETING_DOCS"
 
 # Create marketing blob container and upload data
 log_info "Creating marketing blob container..."
