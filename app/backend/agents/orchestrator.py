@@ -39,7 +39,41 @@ def user_message(text: str) -> Message:
     return Message(role="user", contents=[Content.from_text(text)])
 
 
+_KEYWORDS = {
+    "hr": {
+        "on-call", "oncall", "guardia", "escalado", "escalamiento", "pagerduty",
+        "sla", "slo", "postmortem", "post-mortem", "blameless", "incidente",
+        "severidad", "certificacion", "certificación", "compensacion", "compensación",
+        "rotacion", "rotación", "política", "politica", "política",
+    },
+    "marketing": {
+        "runbook", "playbook", "procedimiento", "paso a paso", "troubleshoot",
+        "crashloopbackoff", "cpu alto", "rollback", "latencia", "disco lleno",
+        "ssl", "alerta", "resolver", "como hago", "cómo hago", "como resuelvo",
+        "cómo resuelvo", "pasos para",
+    },
+    "products": {
+        "kubernetes", "k8s", "terraform", "vault", "grafana", "prometheus",
+        "github actions", "argocd", "argo", "datadog", "herramienta", "plataforma",
+        "ci/cd", "cicd", "monitoreo", "observabilidad", "secreto", "secret",
+        "infraestructura", "deploy", "deployment", "helm", "eks", "docker",
+    },
+}
+
+
+def keyword_route(query: str) -> str | None:
+    q = query.lower()
+    scores = {category: sum(1 for kw in kws if kw in q) for category, kws in _KEYWORDS.items()}
+    best = max(scores, key=scores.get)
+    return best if scores[best] > 0 else None
+
+
 async def route_query(router: Agent, query: str) -> str:
+    # Intenta clasificar por keywords (cero latencia)
+    fast = keyword_route(query)
+    if fast:
+        return fast
+    # Fallback al LLM solo si no hay keywords claras
     resp = await router.run(user_message(query))
     route = (resp.text or "").strip().lower()
     if "hr" in route:
