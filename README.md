@@ -4,6 +4,8 @@
 
 A multi-agent orchestration demo using Microsoft Agent Framework SDK and Azure AI Foundry with Azure AI Search for grounded retrieval. Simula un asistente interno que un ingeniero de guardia puede consultar para resolver incidentes.
 
+![Demo Screenshot](docs/demo-screenshot.png)
+
 ## Features
 
 - **Multi-Agent Orchestration**: Intelligent routing of queries to specialized agents (Políticas, Runbooks, Herramientas)
