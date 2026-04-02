@@ -134,9 +134,9 @@ Try: `"¿Cuál es el procedimiento de escalado para un P1?"` or `"¿Qué herrami
 │   └── agents/
 │       ├── orchestrator.py  # Router + specialist agents + OrchestratorState singleton
 │       ├── config.py        # Endpoints and index names
-│       ├── hr_agent.py      # Standalone políticas agent
-│       ├── marketing_agent.py # Standalone runbooks agent
-│       └── products_agent.py  # Standalone herramientas agent
+│       ├── politicas_agent.py   # Standalone agente de políticas & on-call
+│       ├── runbooks_agent.py    # Standalone agente de runbooks operacionales
+│       └── herramientas_agent.py # Standalone agente de herramientas internas
 ├── infra/                   # Bicep IaC templates
 ├── scripts/                 # Setup and deployment scripts
 └── docs/                    # Documentation
