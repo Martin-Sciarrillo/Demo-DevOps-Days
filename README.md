@@ -34,7 +34,7 @@ A multi-agent orchestration demo using Microsoft Agent Framework SDK and Azure A
 │  AGENTE POLÍTICAS │  │  AGENTE RUNBOOKS  │  │ AGENTE HERRAM.    │
 │  Soporte & On-Call│  │  Operaciones SRE  │  │ Plataforma        │
 │                   │  │                   │  │                   │
-│ index-politicas   │  │ index-runbooks    │  │ index-herramientas│
+│ index-hr          │  │ index-marketing   │  │ index-products    │
 │ • On-call/guardia │  │ • Runbooks ops    │  │ • Kubernetes/EKS  │
 │ • SLA/SLO         │  │ • Playbooks P1    │  │ • Terraform/Vault │
 │ • Postmortem      │  │ • Troubleshooting │  │ • CI/CD/ArgoCD    │
@@ -46,10 +46,10 @@ A multi-agent orchestration demo using Microsoft Agent Framework SDK and Azure A
 │  ┌────────────────────────────────────────────────────────────────────────┐  │
 │  │                    ÍNDICES (búsqueda semántica)                         │  │
 │  │                                                                         │  │
-│  │  ┌──────────────┐    ┌──────────────┐    ┌───────────────────┐          │  │
-│  │  │index-politicas│   │index-runbooks│    │index-herramientas │          │  │
-│  │  │   gpt-4o     │    │   gpt-4o     │    │      gpt-4o       │          │  │
-│  │  └──────────────┘    └──────────────┘    └───────────────────┘          │  │
+│  │  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐              │  │
+│  │  │   index-hr   │    │index-marketing│    │index-products│              │  │
+│  │  │   gpt-4o     │    │   gpt-4o     │    │   gpt-4o     │              │  │
+│  │  └──────────────┘    └──────────────┘    └──────────────┘              │  │
 │  └────────────────────────────────────────────────────────────────────────┘  │
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -146,9 +146,9 @@ Try: `"¿Cuál es el procedimiento de escalado para un P1?"` or `"¿Qué herrami
 
 | Agent | Index | Content |
 |-------|-------|---------|
-| Políticas (Soporte & On-Call) | index-politicas | On-call policies, rotaciones, SLA/SLO, postmortem, certificaciones |
-| Runbooks (Operaciones SRE) | index-runbooks | Runbooks operacionales, playbooks P1, troubleshooting paso a paso |
-| Herramientas (Plataforma) | index-herramientas | Kubernetes/EKS, Terraform, Vault, Grafana, GitHub Actions, ArgoCD, Datadog, PagerDuty |
+| Políticas (Soporte & On-Call) | index-hr | On-call policies, rotaciones, SLA/SLO, postmortem, certificaciones |
+| Runbooks (Operaciones SRE) | index-marketing | Runbooks operacionales, playbooks P1, troubleshooting paso a paso |
+| Herramientas (Plataforma) | index-products | Kubernetes/EKS, Terraform, Vault, Grafana, GitHub Actions, ArgoCD, Datadog, PagerDuty |
 
 ## Troubleshooting
 
