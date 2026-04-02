@@ -4,4 +4,4 @@
 .logo::after{content:"";display:block;width:48px;height:60px;background:url(/assets/capi.png) no-repeat center/contain;margin-left:.25rem;flex-shrink:0}
 .logo{align-items:flex-end!important}
 /* Fix scroll: la app ocupa exactamente el viewport, el panel de mensajes scrollea internamente */
-html,body{height:100%;overflow:hidden}.app{height:100vh;min-height:unset;overflow:hidden}.main-layout{height:0;flex:1}.chat-panel{height:0;flex:1;min-height:0}.messages{min-height:0}
+html,body{height:100%;overflow:hidden}.app{height:100vh;min-height:unset;overflow:hidden}.main-layout{min-height:0}.chat-panel{min-height:0;overflow:hidden}.canvas{min-height:0}.messages{min-height:0}
