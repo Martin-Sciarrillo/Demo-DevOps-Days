@@ -30,25 +30,30 @@ flowchart TD
     end
 
     subgraph FIQ["✨ Microsoft Foundry IQ — Agentic Retrieval"]
-        subgraph KBS["Knowledge Bases"]
-            KB1["kb-politicas\ngpt-4o · medium effort"]
-            KB2["kb-runbooks\ngpt-4o · medium effort"]
-            KB3["kb-herramientas\ngpt-4o · medium effort"]
-        end
-        subgraph KSS["Knowledge Sources"]
-            KS1["ks-politicas"]
-            KS2["ks-runbooks"]
-            KS3["ks-herramientas"]
-        end
+        KB1["kb-politicas\ngpt-4o · medium effort"]
+        KB2["kb-runbooks\ngpt-4o · medium effort"]
+        KB3["kb-herramientas\ngpt-4o · medium effort"]
     end
 
-    subgraph AIS["🔍 Azure AI Search"]
-        I1["index-politicas"]
-        I2["index-runbooks"]
-        I3["index-herramientas"]
+    subgraph SRC1["Knowledge Sources — Políticas"]
+        P1["ks-politicas\nindex-politicas"]
+        P2["ks-web-aws-reliability\ndocs.aws.amazon.com/wellarchitected"]
+        P3["ks-web-pagerduty\nsupport.pagerduty.com"]
     end
 
-    R(["💬 Respuesta fundamentada\ncon contexto y citas"])
+    subgraph SRC2["Knowledge Sources — Runbooks"]
+        R1["ks-runbooks\nindex-runbooks"]
+        R2["ks-web-terraform\ndeveloper.hashicorp.com/terraform"]
+        R3["ks-web-aws-ops\ndocs.aws.amazon.com/eks"]
+    end
+
+    subgraph SRC3["Knowledge Sources — Herramientas"]
+        H1["ks-herramientas\nindex-herramientas"]
+        H2["ks-web-ansible\ndocs.ansible.com"]
+        H3["ks-web-hashicorp\ndeveloper.hashicorp.com/vault"]
+    end
+
+    RESP(["💬 Respuesta fundamentada\ncon contexto y citas"])
 
     U --> O
     O -->|"on-call, guardia, SLA"| A1
@@ -57,15 +62,12 @@ flowchart TD
     A1 --> KB1
     A2 --> KB2
     A3 --> KB3
-    KB1 --> KS1
-    KB2 --> KS2
-    KB3 --> KS3
-    KS1 --> I1
-    KS2 --> I2
-    KS3 --> I3
-    KB1 --> R
-    KB2 --> R
-    KB3 --> R
+    KB1 --> SRC1
+    KB2 --> SRC2
+    KB3 --> SRC3
+    KB1 --> RESP
+    KB2 --> RESP
+    KB3 --> RESP
 ```
 
 ### Cómo funciona Foundry IQ
@@ -84,9 +86,11 @@ flowchart LR
             S3["🏔️ Fabric OneLake"]
             S4["📄 SharePoint"]
         end
-        subgraph REM["Remote Sources"]
-            R1["🌐 Web / Bing"]
-            R2["🔌 MCP Server"]
+        subgraph REM["Remote Sources (Web)"]
+            R1["☁️ AWS Docs"]
+            R2["🟠 Terraform / HashiCorp"]
+            R3["🔴 Ansible / Galaxy"]
+            R4["🟣 PagerDuty"]
         end
         RR["📊 Semantic Re-ranking"]
     end
@@ -220,11 +224,11 @@ Probá: `"¿Cuál es el proceso de postmortem blameless?"` o `"¿Cómo accedo a 
 
 ## Knowledge Base Mapping
 
-| Agente | Knowledge Base | Knowledge Source | Índice AI Search | Contenido |
-|--------|---------------|-----------------|-----------------|-----------|
-| Políticas (Soporte & On-Call) | `kb-politicas` | `ks-politicas` | `index-politicas` | On-call, rotaciones, SLA/SLO, postmortem, certificaciones |
-| Runbooks (Operaciones SRE) | `kb-runbooks` | `ks-runbooks` | `index-runbooks` | Runbooks operacionales, playbooks P1/P2, troubleshooting |
-| Herramientas (Plataforma) | `kb-herramientas` | `ks-herramientas` | `index-herramientas` | Kubernetes/EKS, Terraform, Vault, Grafana, ArgoCD, Datadog |
+| Agente | Knowledge Base | Knowledge Sources | Contenido |
+|--------|---------------|-------------------|-----------|
+| Políticas | `kb-politicas` | `ks-politicas` (internal) · `ks-web-aws-reliability` (AWS Well-Architected) · `ks-web-pagerduty` (PagerDuty) | On-call, SLA/SLO, postmortem, escalation policies |
+| Runbooks | `kb-runbooks` | `ks-runbooks` (internal) · `ks-web-terraform` (HashiCorp) · `ks-web-aws-ops` (AWS EKS/SSM) | Runbooks, playbooks P1/P2, IaC procedures |
+| Herramientas | `kb-herramientas` | `ks-herramientas` (internal) · `ks-web-ansible` (Ansible/Galaxy) · `ks-web-hashicorp` (Vault/Consul) | Kubernetes, Terraform, Vault, CI/CD, Ansible |
 
 ## Troubleshooting
 
