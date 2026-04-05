@@ -17,3 +17,8 @@ MODEL = os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4o")
 HR_INDEX = "index-politicas"
 MKT_INDEX = "index-runbooks"
 PRD_INDEX = "index-herramientas"
+
+# FoundryIQ Agentic Retrieval — Knowledge Base names
+KB_POLITICAS = "kb-politicas"
+KB_RUNBOOKS = "kb-runbooks"
+KB_HERRAMIENTAS = "kb-herramientas"

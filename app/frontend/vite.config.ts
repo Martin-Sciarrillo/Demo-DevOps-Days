@@ -12,6 +12,7 @@ export default defineConfig({
       "/chat": "http://localhost:8000",
       "/health": "http://localhost:8000",
       "/agents": "http://localhost:8000",
+      "/assets": "http://localhost:8000",
     },
   },
 });

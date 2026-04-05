@@ -21,15 +21,15 @@ interface Message {
   sources?: SourceInfo[];
 }
 
-type WorkflowStep = "idle" | "routing" | "hr" | "marketing" | "products" | "complete";
+type WorkflowStep = "idle" | "routing" | "politicas" | "runbooks" | "herramientas" | "complete";
 
 // Strongly type the node IDs used in the canvas/status logic.
 type NodeId =
   | "input"
   | "orchestrator"
-  | "hr"
-  | "marketing"
-  | "products"
+  | "politicas"
+  | "runbooks"
+  | "herramientas"
   | "complete"
   | "idle";
 
@@ -62,92 +62,92 @@ interface KBInfo {
 const agents: AgentInfo[] = [
   {
     id: "orchestrator",
-    name: "Orchestrator",
+    name: "Orquestador",
     icon: "",
     description:
-      "Routes user queries to the appropriate specialist agent based on intent analysis. Uses GPT-4.1 for intelligent routing decisions.",
+      "Analiza la consulta y la deriva al agente especialista correcto: Políticas, Runbooks o Herramientas.",
     model: "gpt-4.1",
     connectedKB: null,
     knowledgeSources: [],
   },
   {
-    id: "hr",
-    name: "HR Agent",
+    id: "politicas",
+    name: "Agente Políticas",
     icon: "",
     description:
-      "Handles all HR-related queries including PTO policies, benefits, employee handbook, and company policies.",
-    model: "gpt-4.1",
-    connectedKB: "kb1-hr",
-    knowledgeSources: ["ks-hr-sharepoint", "ks-hr-aisearch", "ks-hr-web"],
+      "Políticas de on-call, rotaciones de guardia, niveles de severidad, SLA/SLO, postmortem y certificaciones.",
+    model: "gpt-4o",
+    connectedKB: "index-politicas",
+    knowledgeSources: ["index-politicas"],
   },
   {
-    id: "marketing",
-    name: "Marketing Agent",
+    id: "runbooks",
+    name: "Agente Runbooks",
     icon: "",
     description:
-      "Specializes in marketing inquiries including brand guidelines, campaign information, and competitor analysis.",
-    model: "gpt-4.1",
-    connectedKB: "kb2-marketing",
-    knowledgeSources: ["ks-marketing", "ks-blob-marketing", "ks-marketing-web"],
+      "Runbooks operacionales, playbooks de incidentes P1, procedimientos de respuesta a alertas y troubleshooting.",
+    model: "gpt-4o",
+    connectedKB: "index-runbooks",
+    knowledgeSources: ["index-runbooks"],
   },
   {
-    id: "products",
-    name: "Products Agent",
+    id: "herramientas",
+    name: "Agente Herramientas",
     icon: "",
     description:
-      "Expert on product catalog, specifications, pricing, and feature information.",
-    model: "gpt-4.1",
-    connectedKB: "kb3-products",
-    knowledgeSources: ["ks-products", "ks-products-onelake"],
+      "Catálogo de herramientas internas: Kubernetes/EKS, Terraform, Vault, CI/CD, ArgoCD, Grafana, Datadog.",
+    model: "gpt-4o",
+    connectedKB: "index-herramientas",
+    knowledgeSources: ["index-herramientas"],
   },
 ];
 
 const knowledgeBases: KBInfo[] = [
   {
-    id: "kb1-hr",
-    name: "HR Knowledge Base",
+    id: "index-politicas",
+    name: "KB Políticas",
     icon: "",
     description:
-      "Contains HR policies, employee handbook, PTO guidelines, benefits information, and company procedures.",
-    retrievalMode: "Agentic Retrieval",
-    model: "text-embedding-3-large",
-    knowledgeSources: ["ks-hr-sharepoint", "ks-hr-aisearch", "ks-hr-web"],
+      "Políticas de on-call, guardia, escalado, SLA/SLO, postmortem, cultura blameless y certificaciones.",
+    retrievalMode: "Semantic Search",
+    model: "gpt-4o",
+    knowledgeSources: ["index-politicas"],
   },
   {
-    id: "kb2-marketing",
-    name: "Marketing Knowledge Base",
+    id: "index-runbooks",
+    name: "KB Runbooks",
     icon: "",
     description:
-      "Brand guidelines, marketing campaigns, customer segments, competitor analysis, and promotional materials.",
-    retrievalMode: "Agentic Retrieval",
-    model: "text-embedding-3-large",
-    knowledgeSources: ["ks-marketing", "ks-blob-marketing", "ks-marketing-web"],
+      "Runbooks operacionales, playbooks de incidentes, procedimientos de respuesta a alertas y troubleshooting.",
+    retrievalMode: "Semantic Search",
+    model: "gpt-4o",
+    knowledgeSources: ["index-runbooks"],
   },
   {
-    id: "kb3-products",
-    name: "Products Knowledge Base",
+    id: "index-herramientas",
+    name: "KB Herramientas",
     icon: "",
     description:
-      "Complete product catalog with specifications, pricing, features, and inventory information.",
-    retrievalMode: "Agentic Retrieval",
-    model: "text-embedding-3-large",
-    knowledgeSources: ["ks-products", "ks-products-onelake"],
+      "Catálogo de herramientas de infraestructura, CI/CD, monitoring, observabilidad y gestión de secretos.",
+    retrievalMode: "Semantic Search",
+    model: "gpt-4o",
+    knowledgeSources: ["index-herramientas"],
   },
 ];
 
 const sourceLogos: Record<string, string> = {
-  "hr-agent": "👥",
-  "marketing-agent": "📣",
-  "products-agent": "📦",
-  "kb1-hr": "📋",
-  "kb2-marketing": "🎨",
-  "kb3-products": "🏷️",
+  "politicas-agent": "📋",
+  "runbooks-agent": "📖",
+  "herramientas-agent": "🛠️",
+  "index-politicas": "📋",
+  "index-runbooks": "📖",
+  "index-herramientas": "🛠️",
 };
 
 const predefinedQuestions = [
-  { text: "What is the PTO policy at Zava?", agent: "HR" },
-  { text: "What are Zava's brand colors?", agent: "Marketing" },
-  { text: "What features does the Smart Fitness Watch have?", agent: "Products" },
+  { text: "¿Cuál es el proceso de postmortem blameless?", agent: "Políticas" },
+  { text: "¿Cómo resuelvo un CrashLoopBackOff en producción?", agent: "Runbooks" },
+  { text: "¿Cómo accedo a Vault para gestionar secretos?", agent: "Herramientas" },
 ];
 
 function App() {
@@ -203,8 +203,8 @@ function App() {
     setIsLoading(true);
     setWorkflowStep("routing");
 
-    addLog("info", `User query received: "${text}"`);
-    addLog("route", "Orchestrator analyzing intent...");
+    addLog("info", `Consulta recibida: "${text}"`);
+    addLog("route", "Orquestador analizando la consulta...");
 
     try {
       const response = await fetch("/chat", {
@@ -215,30 +215,30 @@ function App() {
       const data = await response.json();
 
       // Set workflow step based on agent
-      const agentType = data.agent?.replace("-agent", "") || "hr";
+      const agentType = data.agent?.replace("-agent", "") || "politicas";
       setWorkflowStep(agentType as WorkflowStep);
       setActiveAgent(data.agent || null);
 
       const kbMap: Record<string, string> = {
-        hr: "kb1-hr",
-        marketing: "kb2-marketing",
-        products: "kb3-products",
+        politicas: "index-politicas",
+        runbooks: "index-runbooks",
+        herramientas: "index-herramientas",
       };
-      addLog("route", `Routed to ${data.agent || "specialist"}`);
+      addLog("route", `Derivado a ${data.agent || "especialista"}`);
       addLog(
         "query",
-        `${data.agent} querying ${kbMap[agentType]} via agentic retrieval...`
+        `${data.agent} consultando ${kbMap[agentType]} via búsqueda semántica...`
       );
 
       // Log retrieved documents
       const sources = data.sources as SourceInfo[];
       if (sources && sources.length > 0) {
         const docNames = sources
-          .map((s: SourceInfo) => s.title || s.filepath || "document")
+          .map((s: SourceInfo) => s.title || s.filepath || "documento")
           .join(", ");
-        addLog("response", `Retrieved from ${kbMap[agentType]}: ${docNames}`);
+        addLog("response", `Recuperado de ${kbMap[agentType]}: ${docNames}`);
       } else {
-        addLog("response", `Retrieved documents from ${kbMap[agentType]}`);
+        addLog("response", `Documentos recuperados de ${kbMap[agentType]}`);
       }
 
       const assistantMessage: Message = {
@@ -249,13 +249,13 @@ function App() {
       };
       setMessages((prev) => [...prev, assistantMessage]);
 
-      addLog("info", `Response generated (${data.message.length} chars)`);
+      addLog("info", `Respuesta generada (${data.message.length} chars)`);
       setTimeout(() => setWorkflowStep("complete"), 500);
     } catch (error) {
       console.error("Error:", error);
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: "Sorry, there was an error processing your request." },
+        { role: "assistant", content: "Ocurrió un error al procesar la consulta. Intentá de nuevo." },
       ]);
     } finally {
       setIsLoading(false);
@@ -293,7 +293,7 @@ function App() {
       <header className="header">
         <div className="header-content">
           <div className="logo">
-            <span className="logo-text">Zava</span>
+            <span className="logo-text">DevOps Days</span>
           </div>
         </div>
       </header>
@@ -302,7 +302,7 @@ function App() {
         {/* Left Sidebar */}
         <aside className="sidebar">
           <div className="sidebar-section">
-            <h3>Agents</h3>
+            <h3>Agentes</h3>
             <div className="sidebar-items">
               {agents.map((agent) => (
                 <div
@@ -316,7 +316,7 @@ function App() {
             </div>
           </div>
           <div className="sidebar-section">
-            <h3>Knowledge Bases</h3>
+            <h3>Bases de Conocimiento</h3>
             <div className="sidebar-items">
               {knowledgeBases.map((kb) => (
                 <div
@@ -380,7 +380,7 @@ function App() {
                       )
                     )}
                     {selectedAgent?.knowledgeSources?.length === 0 && !selectedKB && (
-                      <span className="details-value">None (routing only)</span>
+                      <span className="details-value">Ninguna (solo enrutamiento)</span>
                     )}
                   </div>
                 </div>
@@ -396,9 +396,9 @@ function App() {
             <div className={`workflow-node input-node ${getNodeStatus("input")}`}>
               <div className="node-status"></div>
               <div className="node-content">
-                <span className="node-title">User Input</span>
+                <span className="node-title">Entrada</span>
               </div>
-              <div className="node-meta">Text query</div>
+              <div className="node-meta">Consulta de texto</div>
             </div>
 
             <div className="connector vertical"></div>
@@ -407,10 +407,10 @@ function App() {
             <div className={`workflow-node orchestrator-node ${getNodeStatus("orchestrator")}`}>
               <div className="node-status"></div>
               <div className="node-content">
-                <span className="node-title">Orchestrator</span>
+                <span className="node-title">Orquestador</span>
               </div>
-              <div className="node-description">Routes to specialist agent</div>
-              <div className="node-badge">gpt-4.1</div>
+              <div className="node-description">Enruta al agente especialista</div>
+              <div className="node-badge">gpt-4o</div>
             </div>
 
             <div className="connector-branch">
@@ -421,33 +421,33 @@ function App() {
 
             {/* Agent Nodes */}
             <div className="agent-row">
-              <div className={`workflow-node agent-node hr ${getNodeStatus("hr")}`}>
+              <div className={`workflow-node agent-node politicas ${getNodeStatus("politicas")}`}>
                 <div className="node-status"></div>
                 <div className="node-content">
-                  <span className="node-title">HR Agent</span>
+                  <span className="node-title">Agente Políticas</span>
                 </div>
                 <div className="node-kb">
-                  <span className="kb-badge">kb1-hr</span>
+                  <span className="kb-badge">index-politicas</span>
                 </div>
               </div>
 
-              <div className={`workflow-node agent-node marketing ${getNodeStatus("marketing")}`}>
+              <div className={`workflow-node agent-node runbooks ${getNodeStatus("runbooks")}`}>
                 <div className="node-status"></div>
                 <div className="node-content">
-                  <span className="node-title">Marketing Agent</span>
+                  <span className="node-title">Agente Runbooks</span>
                 </div>
                 <div className="node-kb">
-                  <span className="kb-badge">kb2-marketing</span>
+                  <span className="kb-badge">index-runbooks</span>
                 </div>
               </div>
 
-              <div className={`workflow-node agent-node products ${getNodeStatus("products")}`}>
+              <div className={`workflow-node agent-node herramientas ${getNodeStatus("herramientas")}`}>
                 <div className="node-status"></div>
                 <div className="node-content">
-                  <span className="node-title">Products Agent</span>
+                  <span className="node-title">Agente Herramientas</span>
                 </div>
                 <div className="node-kb">
-                  <span className="kb-badge">kb3-products</span>
+                  <span className="kb-badge">index-herramientas</span>
                 </div>
               </div>
             </div>
@@ -462,25 +462,25 @@ function App() {
             <div className={`workflow-node output-node ${workflowStep === "complete" ? "complete" : "idle"}`}>
               <div className="node-status"></div>
               <div className="node-content">
-                <span className="node-title">Response</span>
+                <span className="node-title">Respuesta</span>
               </div>
-              <div className="node-meta">Grounded answer</div>
+              <div className="node-meta">Respuesta fundamentada</div>
             </div>
           </div>
 
           {/* Trace Logs Panel */}
           <div className="trace-panel">
             <div className="trace-header">
-              <span className="trace-title">Execution Trace</span>
+              <span className="trace-title">Traza de ejecución</span>
               {traceLogs.length > 0 && (
                 <button className="trace-clear" onClick={() => setTraceLogs([])}>
-                  Clear
+                  Limpiar
                 </button>
               )}
             </div>
             <div className="trace-logs">
               {traceLogs.length === 0 ? (
-                <div className="trace-empty">Waiting for query execution...</div>
+                <div className="trace-empty">Esperando ejecución de consulta...</div>
               ) : (
                 traceLogs.map((log, i) => (
                   <div key={i} className={`trace-log ${log.type}`}>
@@ -508,7 +508,7 @@ function App() {
             <h2>Chat</h2>
             <div className="chat-status">
               {isLoading && <span className="status-dot pulse"></span>}
-              <span>{isLoading ? "Processing..." : "Ready"}</span>
+              <span>{isLoading ? "Procesando..." : "Listo"}</span>
             </div>
           </div>
 
@@ -528,15 +528,15 @@ function App() {
           <div className="messages">
             {messages.length === 0 && (
               <div className="empty-state">
-                <div className="empty-text">Start a conversation</div>
-                <div className="empty-subtext">Ask a question or click a quick action above</div>
+                <div className="empty-text">Iniciá una conversación</div>
+                <div className="empty-subtext">Hacé una pregunta o usá los accesos rápidos de arriba</div>
               </div>
             )}
             {messages.map((msg, i) => (
               <div key={i} className={`message ${msg.role}`}>
                 {msg.agent && (
                   <div className="message-header">
-                    <span className="agent-icon">{sourceLogos[msg.agent] || "🤖"}</span>
+                    <img src="/assets/capi.png" alt="DevOps Days" className="agent-icon-img" />
                     <span className="agent-name">{msg.agent}</span>
                   </div>
                 )}
@@ -546,7 +546,7 @@ function App() {
                 />
                 {msg.agent && (
                   <div className="message-sources">
-                    <span className="source-label">Sources:</span>
+                    <span className="source-label">Fuentes:</span>
                     <div className="source-list">
                       {msg.sources && msg.sources.length > 0 ? (
                         msg.sources.map((src, idx) => (
@@ -557,11 +557,11 @@ function App() {
                         ))
                       ) : (
                         <span className="source-name">
-                          {msg.agent.replace("-agent", "") === "hr"
-                            ? "kb1-hr"
-                            : msg.agent.replace("-agent", "") === "marketing"
-                            ? "kb2-marketing"
-                            : "kb3-products"}
+                          {msg.agent.replace("-agent", "") === "politicas"
+                            ? "index-politicas"
+                            : msg.agent.replace("-agent", "") === "runbooks"
+                            ? "index-runbooks"
+                            : "index-herramientas"}
                         </span>
                       )}
                     </div>
@@ -577,7 +577,7 @@ function App() {
                   <span></span>
                 </div>
                 <span className="loading-text">
-                  {workflowStep === "routing" ? "Routing query..." : `${activeAgent} processing...`}
+                  {workflowStep === "routing" ? "Enrutando consulta..." : `${activeAgent} procesando...`}
                 </span>
               </div>
             )}
@@ -589,11 +589,11 @@ function App() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && sendMessage()}
-              placeholder="Ask a question..."
+              placeholder="Hacé una pregunta..."
               disabled={isLoading}
             />
             <button onClick={() => sendMessage()} disabled={isLoading || !input.trim()}>
-              Send
+              Enviar
             </button>
           </div>
         </aside>

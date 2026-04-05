@@ -8,7 +8,7 @@ from agent_framework import Agent, Message, Content
 from agent_framework_openai import OpenAIChatCompletionClient
 from agent_framework.azure import AzureAISearchContextProvider
 
-from config import OPENAI_ENDPOINT, SEARCH_ENDPOINT, MODEL, HR_INDEX, MKT_INDEX, PRD_INDEX
+from config import OPENAI_ENDPOINT, SEARCH_ENDPOINT, MODEL, HR_INDEX, MKT_INDEX, PRD_INDEX, KB_POLITICAS, KB_RUNBOOKS, KB_HERRAMIENTAS
 
 HR_INSTRUCTIONS = """Sos el Agente de Políticas DevOps de DevOps Days CORP.
 Respondé preguntas sobre políticas de on-call, rotaciones de guardia, niveles de severidad de incidentes, SLAs/SLOs,
@@ -27,11 +27,11 @@ Respondé siempre en castellano rioplatense. Sé específico e incluí casos de 
 
 ROUTER_INSTRUCTIONS = """Sos un agente de enrutamiento para un equipo de DevOps/SRE. Analizá la consulta y determiná qué especialista debe manejarla.
 
-- "hr": políticas de on-call, guardia, escalado, SLA, SLO, postmortem, cultura, compensación, certificaciones
-- "products": herramientas internas, plataformas, Kubernetes, Terraform, CI/CD, monitoring, observabilidad, secretos
-- "marketing": runbooks, playbooks, procedimientos operacionales, cómo resolver alertas, troubleshooting paso a paso
+- "politicas": políticas de on-call, guardia, escalado, SLA, SLO, postmortem, cultura, compensación, certificaciones
+- "herramientas": herramientas internas, plataformas, Kubernetes, Terraform, CI/CD, monitoring, observabilidad, secretos
+- "runbooks": runbooks, playbooks, procedimientos operacionales, cómo resolver alertas, troubleshooting paso a paso
 
-Respondé ÚNICAMENTE con uno de estos nombres: hr, products, marketing
+Respondé ÚNICAMENTE con uno de estos nombres: politicas, herramientas, runbooks
 Solo respondé con el nombre del agente, nada más."""
 
 
@@ -40,19 +40,19 @@ def user_message(text: str) -> Message:
 
 
 _KEYWORDS = {
-    "hr": {
+    "politicas": {
         "on-call", "oncall", "guardia", "escalado", "escalamiento", "pagerduty",
         "sla", "slo", "postmortem", "post-mortem", "blameless", "incidente",
         "severidad", "certificacion", "certificación", "compensacion", "compensación",
         "rotacion", "rotación", "política", "politica", "política",
     },
-    "marketing": {
+    "runbooks": {
         "runbook", "playbook", "procedimiento", "paso a paso", "troubleshoot",
         "crashloopbackoff", "cpu alto", "rollback", "latencia", "disco lleno",
         "ssl", "alerta", "resolver", "como hago", "cómo hago", "como resuelvo",
         "cómo resuelvo", "pasos para",
     },
-    "products": {
+    "herramientas": {
         "kubernetes", "k8s", "terraform", "vault", "grafana", "prometheus",
         "github actions", "argocd", "argo", "datadog", "herramienta", "plataforma",
         "ci/cd", "cicd", "monitoreo", "observabilidad", "secreto", "secret",
@@ -76,13 +76,13 @@ async def route_query(router: Agent, query: str) -> str:
     # Fallback al LLM solo si no hay keywords claras
     resp = await router.run(user_message(query))
     route = (resp.text or "").strip().lower()
-    if "hr" in route:
-        return "hr"
-    if "marketing" in route or "runbook" in route or "playbook" in route:
-        return "marketing"
-    if "product" in route or "tool" in route or "herramienta" in route:
-        return "products"
-    return "hr"
+    if "politica" in route or "guardia" in route or "sla" in route:
+        return "politicas"
+    if "runbook" in route or "playbook" in route or "procedimiento" in route:
+        return "runbooks"
+    if "herramienta" in route or "tool" in route or "plataforma" in route:
+        return "herramientas"
+    return "politicas"
 
 
 class OrchestratorState:
@@ -106,22 +106,25 @@ class OrchestratorState:
             api_version="2024-12-01-preview",
         )
         self._hr_search = AzureAISearchContextProvider(
-            "hr-search", endpoint=SEARCH_ENDPOINT, index_name=HR_INDEX,
-            credential=self._credential, mode="semantic", semantic_configuration_name="default",
+            "hr-search", endpoint=SEARCH_ENDPOINT,
+            credential=self._credential, mode="agentic",
+            knowledge_base_name=KB_POLITICAS, retrieval_reasoning_effort="medium",
         )
         self._marketing_search = AzureAISearchContextProvider(
-            "marketing-search", endpoint=SEARCH_ENDPOINT, index_name=MKT_INDEX,
-            credential=self._credential, mode="semantic", semantic_configuration_name="default",
+            "marketing-search", endpoint=SEARCH_ENDPOINT,
+            credential=self._credential, mode="agentic",
+            knowledge_base_name=KB_RUNBOOKS, retrieval_reasoning_effort="medium",
         )
         self._products_search = AzureAISearchContextProvider(
-            "products-search", endpoint=SEARCH_ENDPOINT, index_name=PRD_INDEX,
-            credential=self._credential, mode="semantic", semantic_configuration_name="default",
+            "products-search", endpoint=SEARCH_ENDPOINT,
+            credential=self._credential, mode="agentic",
+            knowledge_base_name=KB_HERRAMIENTAS, retrieval_reasoning_effort="medium",
         )
         self.router = Agent(client=self._client, instructions=ROUTER_INSTRUCTIONS)
         self.specialists = {
-            "hr": Agent(client=self._client, context_providers=[self._hr_search], instructions=HR_INSTRUCTIONS),
-            "marketing": Agent(client=self._client, context_providers=[self._marketing_search], instructions=MARKETING_INSTRUCTIONS),
-            "products": Agent(client=self._client, context_providers=[self._products_search], instructions=PRODUCTS_INSTRUCTIONS),
+            "politicas": Agent(client=self._client, context_providers=[self._hr_search], instructions=HR_INSTRUCTIONS),
+            "runbooks": Agent(client=self._client, context_providers=[self._marketing_search], instructions=MARKETING_INSTRUCTIONS),
+            "herramientas": Agent(client=self._client, context_providers=[self._products_search], instructions=PRODUCTS_INSTRUCTIONS),
         }
 
     async def stop(self):
@@ -171,34 +174,34 @@ async def run_orchestrator():
             AzureAISearchContextProvider(
                 "hr-search",
                 endpoint=SEARCH_ENDPOINT,
-                index_name=HR_INDEX,
                 credential=credential,
-                mode="semantic",
-                semantic_configuration_name="default",
+                mode="agentic",
+                knowledge_base_name=KB_POLITICAS,
+                retrieval_reasoning_effort="medium",
             ) as hr_search,
             AzureAISearchContextProvider(
                 "marketing-search",
                 endpoint=SEARCH_ENDPOINT,
-                index_name=MKT_INDEX,
                 credential=credential,
-                mode="semantic",
-                semantic_configuration_name="default",
+                mode="agentic",
+                knowledge_base_name=KB_RUNBOOKS,
+                retrieval_reasoning_effort="medium",
             ) as marketing_search,
             AzureAISearchContextProvider(
                 "products-search",
                 endpoint=SEARCH_ENDPOINT,
-                index_name=PRD_INDEX,
                 credential=credential,
-                mode="semantic",
-                semantic_configuration_name="default",
+                mode="agentic",
+                knowledge_base_name=KB_HERRAMIENTAS,
+                retrieval_reasoning_effort="medium",
             ) as products_search,
         ):
             router = Agent(client=client, instructions=ROUTER_INSTRUCTIONS)
 
             specialists = {
-                "hr": Agent(client=client, context_providers=[hr_search], instructions=HR_INSTRUCTIONS),
-                "marketing": Agent(client=client, context_providers=[marketing_search], instructions=MARKETING_INSTRUCTIONS),
-                "products": Agent(client=client, context_providers=[products_search], instructions=PRODUCTS_INSTRUCTIONS),
+                "politicas": Agent(client=client, context_providers=[hr_search], instructions=HR_INSTRUCTIONS),
+                "runbooks": Agent(client=client, context_providers=[marketing_search], instructions=MARKETING_INSTRUCTIONS),
+                "herramientas": Agent(client=client, context_providers=[products_search], instructions=PRODUCTS_INSTRUCTIONS),
             }
 
             print("\n Multi-Agent Orchestrator with KB Grounding")

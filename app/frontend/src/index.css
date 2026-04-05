@@ -36,6 +36,50 @@ body {
   flex-direction: column;
 }
 
+/* ===== SCROLL FIX: viewport fijo, messages scrollea internamente ===== */
+html {
+  height: 100vh !important;
+  overflow: hidden !important;
+}
+
+body {
+  height: 100vh !important;
+  min-height: unset !important;
+  overflow: hidden !important;
+}
+
+#root {
+  height: 100vh !important;
+  overflow: hidden !important;
+}
+
+.app {
+  height: 100vh !important;
+  min-height: unset !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.main-layout {
+  flex: 1 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.chat-panel {
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.messages {
+  flex: 1 !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+}
+
 /* Header */
 .header {
   background: var(--bg-card);
@@ -406,17 +450,17 @@ body {
 }
 
 /* Agent node colors */
-.agent-node.hr .kb-badge {
+.agent-node.politicas .kb-badge {
   background: #f5f3ff;
   color: #7c3aed;
 }
 
-.agent-node.marketing .kb-badge {
+.agent-node.runbooks .kb-badge {
   background: #fdf2f8;
   color: #db2777;
 }
 
-.agent-node.products .kb-badge {
+.agent-node.herramientas .kb-badge {
   background: #f0fdf4;
   color: #16a34a;
 }
@@ -664,6 +708,8 @@ body {
   border-left: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
 }
 
 .chat-header {
@@ -810,6 +856,13 @@ body {
 
 .agent-icon {
   font-size: 1rem;
+}
+
+.agent-icon-img {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .agent-name {
@@ -989,4 +1042,58 @@ body {
   .agent-row {
     flex-direction: column;
   }
+}
+
+/* ===== LOGO CAPYBARA EN HEADER ===== */
+.logo::after {
+  content: "";
+  display: block;
+  width: 48px;
+  height: 60px;
+  background: url(/assets/capi.png) no-repeat center / contain;
+  margin-left: .25rem;
+  flex-shrink: 0;
+}
+
+.logo {
+  align-items: flex-end !important;
+}
+
+/* ===== LABELS DE EQUIPO EN NODOS DE AGENTES ===== */
+.agent-node {
+  position: relative;
+  padding-top: 2rem !important;
+}
+
+.agent-node::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: .25rem .75rem;
+  font-size: .6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  border-radius: 11px 11px 0 0;
+  text-align: center;
+}
+
+.agent-node.politicas::before {
+  content: "Equipo de Soporte & On-Call";
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.agent-node.runbooks::before {
+  content: "Equipo de Operaciones SRE";
+  background: #fce7f3;
+  color: #be185d;
+}
+
+.agent-node.herramientas::before {
+  content: "Equipo de Plataforma & Herramientas";
+  background: #dcfce7;
+  color: #15803d;
 }
