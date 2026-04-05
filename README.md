@@ -16,58 +16,89 @@ Demo de orquestación multi-agente usando Microsoft Agent Framework SDK y Azure 
 
 ## Architecture
 
+### Flujo de una consulta
+
+```mermaid
+flowchart TD
+    U(["👤 Ingeniero de guardia\n#quot;¿Cómo resuelvo un CrashLoopBackOff?#quot;"])
+
+    subgraph AF["🤖 Microsoft Agent Framework SDK"]
+        O["⚙️ Orchestrator Agent\nAnaliza intent · Enruta · Retorna respuesta"]
+        A1["📋 Agente Políticas\nSoporte & On-Call"]
+        A2["📖 Agente Runbooks\nOperaciones SRE"]
+        A3["🛠️ Agente Herramientas\nPlataforma"]
+    end
+
+    subgraph FIQ["✨ Microsoft Foundry IQ — Agentic Retrieval"]
+        subgraph KBS["Knowledge Bases"]
+            KB1["kb-politicas\ngpt-4o · medium effort"]
+            KB2["kb-runbooks\ngpt-4o · medium effort"]
+            KB3["kb-herramientas\ngpt-4o · medium effort"]
+        end
+        subgraph KSS["Knowledge Sources"]
+            KS1["ks-politicas"]
+            KS2["ks-runbooks"]
+            KS3["ks-herramientas"]
+        end
+    end
+
+    subgraph AIS["🔍 Azure AI Search"]
+        I1["index-politicas"]
+        I2["index-runbooks"]
+        I3["index-herramientas"]
+    end
+
+    R(["💬 Respuesta fundamentada\ncon contexto y citas"])
+
+    U --> O
+    O -->|"on-call, guardia, SLA"| A1
+    O -->|"runbook, playbook, troubleshoot"| A2
+    O -->|"k8s, terraform, vault, CI/CD"| A3
+    A1 --> KB1
+    A2 --> KB2
+    A3 --> KB3
+    KB1 --> KS1
+    KB2 --> KS2
+    KB3 --> KS3
+    KS1 --> I1
+    KS2 --> I2
+    KS3 --> I3
+    KB1 --> R
+    KB2 --> R
+    KB3 --> R
 ```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                              User Query                                       │
-│            "¿Cómo resuelvo un CrashLoopBackOff en producción?"               │
-└─────────────────────────────────┬────────────────────────────────────────────┘
-                                  │
-                                  ▼
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                         ORCHESTRATOR AGENT                                    │
-│                                                                               │
-│   • Analiza el intent de la consulta                                          │
-│   • Enruta al agente especialista correcto                                    │
-│   • Retorna respuesta fundamentada con citas                                  │
-└───────────┬─────────────────────┬─────────────────────┬──────────────────────┘
-            │                     │                     │
-            ▼                     ▼                     ▼
-┌───────────────────┐  ┌───────────────────┐  ┌────────────────────┐
-│  AGENTE POLÍTICAS │  │  AGENTE RUNBOOKS  │  │ AGENTE HERRAM.     │
-│  Soporte & On-Call│  │  Operaciones SRE  │  │ Plataforma         │
-│                   │  │                   │  │                    │
-│  kb-politicas     │  │  kb-runbooks      │  │  kb-herramientas   │
-│  • On-call/guardia│  │  • Runbooks ops   │  │  • Kubernetes/EKS  │
-│  • SLA/SLO        │  │  • Playbooks P1   │  │  • Terraform/Vault │
-│  • Postmortem     │  │  • Troubleshooting│  │  • CI/CD/ArgoCD    │
-└─────────┬─────────┘  └─────────┬─────────┘  └──────────┬─────────┘
-          │                      │                       │
-          ▼                      ▼                       ▼
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                         MICROSOFT FOUNDRY IQ                                  │
-│  ┌────────────────────────────────────────────────────────────────────────┐  │
-│  │                    FOUNDRYIQ KNOWLEDGE BASES                            │  │
-│  │  ┌─────────────────┐  ┌──────────────────┐  ┌──────────────────────┐   │  │
-│  │  │  kb-politicas   │  │   kb-runbooks    │  │   kb-herramientas    │   │  │
-│  │  │    gpt-4o       │  │     gpt-4o       │  │       gpt-4o         │   │  │
-│  │  └────────┬────────┘  └────────┬─────────┘  └──────────┬───────────┘   │  │
-│  │           ▼                    ▼                        ▼               │  │
-│  │  ┌────────────────────────────────────────────────────────────────┐     │  │
-│  │  │                    KNOWLEDGE SOURCES                           │     │  │
-│  │  │  Políticas:    ks-politicas  →  index-politicas               │     │  │
-│  │  │  Runbooks:     ks-runbooks   →  index-runbooks                │     │  │
-│  │  │  Herramientas: ks-herramientas → index-herramientas           │     │  │
-│  │  └──────────────────────────┬─────────────────────────────────────┘     │  │
-│  └────────────────────────────────────────────────────────────────────────┘  │
-└──────────────────────────────────────────────────────────────────────────────┘
-                                  │
-                                  ▼
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                           AZURE AI SEARCH                                     │
-│                    srch-jnlr3ry4yf2o6.search.windows.net                      │
-│                                                                               │
-│   index-politicas      index-runbooks       index-herramientas               │
-└──────────────────────────────────────────────────────────────────────────────┘
+
+### Cómo funciona Foundry IQ
+
+```mermaid
+flowchart LR
+    subgraph AG["Agent"]
+        T["Task\nSystem Prompt\n+ Chat"]
+    end
+
+    subgraph FIQ["✨ Foundry IQ  ·  Azure AI Search"]
+        SEL["🧠 Knowledge Source\nSelection\ngpt-4o"]
+        subgraph IDX["Indexed Sources"]
+            S1["🔍 AI Search Index"]
+            S2["📦 Azure Blob"]
+            S3["🏔️ Fabric OneLake"]
+            S4["📄 SharePoint"]
+        end
+        subgraph REM["Remote Sources"]
+            R1["🌐 Web / Bing"]
+            R2["🔌 MCP Server"]
+        end
+        RR["📊 Semantic Re-ranking"]
+    end
+
+    GR["📎 Grounding\nContexto relevante"]
+
+    T -->|"Prompt + Chat\n+ Instructions"| SEL
+    SEL --> IDX
+    SEL --> REM
+    IDX --> RR
+    REM --> RR
+    RR --> GR
 ```
 
 ## Prerequisites
