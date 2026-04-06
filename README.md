@@ -252,3 +252,11 @@ Probá: `"¿Cuál es el proceso de postmortem blameless?"` o `"¿Cómo accedo a 
 ## License
 
 MIT License
+
+---
+
+## Referencias
+
+- 🤖 [More about Agent Framework](https://aka.ms/agent-framework)
+- 🔍 [More about Foundry IQ](https://aka.ms/FoundryIQ)
+- 👤 [More about me](https://aka.ms/Tincho)
