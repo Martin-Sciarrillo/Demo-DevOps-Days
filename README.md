@@ -72,9 +72,9 @@ flowchart TD
     KB1 --> SRC1
     KB2 --> SRC2
     KB3 --> SRC3
-    KB1 --> RESP
-    KB2 --> RESP
-    KB3 --> RESP
+    P3 --> RESP
+    R3 --> RESP
+    H3 --> RESP
 ```
 
 ### Cómo funciona Foundry IQ
