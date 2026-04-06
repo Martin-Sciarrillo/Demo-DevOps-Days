@@ -6,6 +6,9 @@ Simple FastAPI wrapper around the orchestrator.
 
 import os
 import sys
+import asyncio
+import unicodedata
+import re
 from pathlib import Path
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
@@ -19,6 +22,36 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+
+# ── Demo response cache ───────────────────────────────────────────────────────
+_CACHE: dict[str, tuple[str, str, list]] = {}
+
+# Preguntas de la demo — se pre-calientan al arrancar el servidor
+_DEMO_QUESTIONS = [
+    "¿Cuál es el proceso de postmortem blameless?",
+    "¿Cómo resuelvo un CrashLoopBackOff en producción?",
+    "¿Cómo accedo a Vault para gestionar secretos?",
+]
+
+def _normalize(q: str) -> str:
+    """Lowercase + strip accents + colapsar espacios para matching robusto."""
+    nfkd = unicodedata.normalize("NFKD", q.lower().strip())
+    ascii_str = "".join(c for c in nfkd if not unicodedata.combining(c))
+    return re.sub(r"\s+", " ", ascii_str)
+
+async def _prewarm():
+    """Ejecuta las preguntas de demo en background y cachea las respuestas."""
+    from agents.orchestrator import run_single_query
+    for q in _DEMO_QUESTIONS:
+        key = _normalize(q)
+        if key not in _CACHE:
+            try:
+                print(f"Pre-warming: {q[:50]}...")
+                result = await run_single_query(q)
+                _CACHE[key] = result
+                print(f"  ✓ cacheado ({q[:40]})")
+            except Exception as e:
+                print(f"  ✗ error pre-warming '{q[:40]}': {e}")
 
 
 class ChatRequest(BaseModel):
@@ -45,6 +78,8 @@ async def lifespan(app: FastAPI):
     print("Starting FoundryIQ Agent Framework Demo...")
     await startup()
     print("Agents ready.")
+    # Pre-warm demo questions in background — no bloquea el arranque
+    asyncio.create_task(_prewarm())
     yield
     await shutdown()
     print("Shutting down...")
@@ -80,11 +115,15 @@ async def chat(request: ChatRequest):
     Uses the orchestrator to route and respond.
     """
     try:
-        # Lazy import to avoid startup hang
         from agents.orchestrator import run_single_query
-        
-        route, response_text, sources = await run_single_query(request.message)
-        
+
+        key = _normalize(request.message)
+        if key in _CACHE:
+            route, response_text, sources = _CACHE[key]
+        else:
+            route, response_text, sources = await run_single_query(request.message)
+            _CACHE[key] = (route, response_text, sources)
+
         return ChatResponse(
             message=response_text,
             agent=f"{route}-agent",
