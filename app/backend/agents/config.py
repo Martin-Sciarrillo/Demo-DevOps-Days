@@ -12,7 +12,7 @@ SEARCH_ENDPOINT = os.getenv(
     "https://srch-jnlr3ry4yf2o6.search.windows.net",
 )
 
-MODEL = os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4o-mini")
+MODEL = os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4o")
 
 HR_INDEX = "index-politicas"
 MKT_INDEX = "index-runbooks"

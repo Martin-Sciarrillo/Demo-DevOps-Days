@@ -17,7 +17,7 @@ Demo de orquestación multi-agente usando Microsoft Agent Framework SDK y Azure 
 
 - **Multi-Agent Orchestration**: Enrutamiento inteligente hacia agentes especializados (Políticas, Runbooks, Herramientas)
 - **Microsoft Agent Framework SDK**: Construido sobre el SDK oficial `agent-framework` de Python
-- **FoundryIQ Knowledge Bases**: Modo Agentic Retrieval con `gpt-4o-mini` para respuestas fundamentadas
+- **FoundryIQ Knowledge Bases**: Modo Agentic Retrieval con `gpt-4o` para respuestas fundamentadas
 - **RBAC-Only Authentication**: Sin API keys — usa `DefaultAzureCredential` en todos los servicios
 - **Fully Automated Deployment**: Infrastructure as Code con Bicep + setup scripts
 
@@ -37,9 +37,9 @@ flowchart TD
     end
 
     subgraph FIQ["✨ Microsoft Foundry IQ — Agentic Retrieval"]
-        KB1["kb-politicas\ngpt-4o-mini · medium effort"]
-        KB2["kb-runbooks\ngpt-4o-mini · medium effort"]
-        KB3["kb-herramientas\ngpt-4o-mini · medium effort"]
+        KB1["kb-politicas\ngpt-4o · medium effort"]
+        KB2["kb-runbooks\ngpt-4o · medium effort"]
+        KB3["kb-herramientas\ngpt-4o · medium effort"]
     end
 
     subgraph SRC1["Knowledge Sources — Políticas"]
@@ -86,7 +86,7 @@ flowchart LR
     end
 
     subgraph FIQ["✨ Foundry IQ  ·  Azure AI Search"]
-        SEL["🧠 Knowledge Source\nSelection\ngpt-4o-mini"]
+        SEL["🧠 Knowledge Source\nSelection\ngpt-4o"]
         subgraph IDX["Indexed Sources"]
             S1["🔍 AI Search Index"]
             S2["📦 Azure Blob"]
@@ -173,7 +173,7 @@ Crear `.env` en la raíz del repo:
 ```env
 AZURE_OPENAI_ENDPOINT=https://<your-resource>.openai.azure.com/
 AZURE_SEARCH_ENDPOINT=https://<your-resource>.search.windows.net
-AZURE_OPENAI_DEPLOYMENT=gpt-4o-mini
+AZURE_OPENAI_DEPLOYMENT=gpt-4o
 AZURE_AI_PROJECT_ENDPOINT=https://<your-foundry>.services.ai.azure.com/api/projects/<project>
 ```
 
