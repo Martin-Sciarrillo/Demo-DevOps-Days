@@ -124,7 +124,7 @@ const agents: AgentInfo[] = [
     icon: "",
     description:
       "Políticas de on-call, rotaciones de guardia, niveles de severidad, SLA/SLO, postmortem y certificaciones.",
-    model: "gpt-4o",
+    model: "gpt-4o-mini",
     connectedKB: "index-politicas",
     knowledgeSources: ["index-politicas"],
   },
@@ -134,7 +134,7 @@ const agents: AgentInfo[] = [
     icon: "",
     description:
       "Runbooks operacionales, playbooks de incidentes P1, procedimientos de respuesta a alertas y troubleshooting.",
-    model: "gpt-4o",
+    model: "gpt-4o-mini",
     connectedKB: "index-runbooks",
     knowledgeSources: ["index-runbooks"],
   },
@@ -144,7 +144,7 @@ const agents: AgentInfo[] = [
     icon: "",
     description:
       "Catálogo de herramientas internas: Kubernetes/EKS, Terraform, Vault, CI/CD, ArgoCD, Grafana, Datadog.",
-    model: "gpt-4o",
+    model: "gpt-4o-mini",
     connectedKB: "index-herramientas",
     knowledgeSources: ["index-herramientas"],
   },
@@ -157,7 +157,7 @@ const knowledgeBases: KBInfo[] = [
     icon: "",
     description: "Políticas de on-call, guardia, escalado, SLA/SLO, postmortem, cultura blameless y certificaciones.",
     retrievalMode: "Agentic Retrieval",
-    model: "gpt-4o",
+    model: "gpt-4o-mini",
     knowledgeSources: [
       { name: "Wiki Políticas (interno)", type: "internal" },
       { name: "AWS Well-Architected", type: "web", url: "https://docs.aws.amazon.com/wellarchitected", vendor: "AWS" },
@@ -170,7 +170,7 @@ const knowledgeBases: KBInfo[] = [
     icon: "",
     description: "Runbooks operacionales, playbooks de incidentes, procedimientos de respuesta a alertas y troubleshooting.",
     retrievalMode: "Agentic Retrieval",
-    model: "gpt-4o",
+    model: "gpt-4o-mini",
     knowledgeSources: [
       { name: "Wiki Runbooks (interno)", type: "internal" },
       { name: "Terraform Docs", type: "web", url: "https://developer.hashicorp.com/terraform", vendor: "Terraform" },
@@ -183,7 +183,7 @@ const knowledgeBases: KBInfo[] = [
     icon: "",
     description: "Catálogo de herramientas de infraestructura, CI/CD, monitoring, observabilidad y gestión de secretos.",
     retrievalMode: "Agentic Retrieval",
-    model: "gpt-4o",
+    model: "gpt-4o-mini",
     knowledgeSources: [
       { name: "Wiki Herramientas (interno)", type: "internal" },
       { name: "Ansible Docs", type: "web", url: "https://docs.ansible.com", vendor: "Ansible" },
@@ -476,7 +476,7 @@ function App() {
                 <span className="node-title">Orquestador</span>
               </div>
               <div className="node-description">Enruta al agente especialista</div>
-              <div className="node-badge">gpt-4o</div>
+              <div className="node-badge">gpt-4o-mini</div>
             </div>
 
             <div className="connector-branch">
