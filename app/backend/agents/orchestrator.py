@@ -130,19 +130,19 @@ class OrchestratorState:
         self._hr_search = TrackingSearchProvider(
             "hr-search", endpoint=SEARCH_ENDPOINT,
             credential=self._credential, mode="agentic",
-            knowledge_base_name=KB_POLITICAS, retrieval_reasoning_effort="medium",
+            knowledge_base_name=KB_POLITICAS, retrieval_reasoning_effort="low",
             knowledge_base_output_mode="answer_synthesis",
         )
         self._marketing_search = TrackingSearchProvider(
             "marketing-search", endpoint=SEARCH_ENDPOINT,
             credential=self._credential, mode="agentic",
-            knowledge_base_name=KB_RUNBOOKS, retrieval_reasoning_effort="medium",
+            knowledge_base_name=KB_RUNBOOKS, retrieval_reasoning_effort="low",
             knowledge_base_output_mode="answer_synthesis",
         )
         self._products_search = TrackingSearchProvider(
             "products-search", endpoint=SEARCH_ENDPOINT,
             credential=self._credential, mode="agentic",
-            knowledge_base_name=KB_HERRAMIENTAS, retrieval_reasoning_effort="medium",
+            knowledge_base_name=KB_HERRAMIENTAS, retrieval_reasoning_effort="low",
             knowledge_base_output_mode="answer_synthesis",
         )
         self.router = Agent(client=self._client, instructions=ROUTER_INSTRUCTIONS)
@@ -292,7 +292,7 @@ async def run_orchestrator():
                 credential=credential,
                 mode="agentic",
                 knowledge_base_name=KB_POLITICAS,
-                retrieval_reasoning_effort="medium",
+                retrieval_reasoning_effort="low",
                 knowledge_base_output_mode="answer_synthesis",
             ) as hr_search,
             AzureAISearchContextProvider(
@@ -301,7 +301,7 @@ async def run_orchestrator():
                 credential=credential,
                 mode="agentic",
                 knowledge_base_name=KB_RUNBOOKS,
-                retrieval_reasoning_effort="medium",
+                retrieval_reasoning_effort="low",
                 knowledge_base_output_mode="answer_synthesis",
             ) as marketing_search,
             AzureAISearchContextProvider(
@@ -310,7 +310,7 @@ async def run_orchestrator():
                 credential=credential,
                 mode="agentic",
                 knowledge_base_name=KB_HERRAMIENTAS,
-                retrieval_reasoning_effort="medium",
+                retrieval_reasoning_effort="low",
                 knowledge_base_output_mode="answer_synthesis",
             ) as products_search,
         ):
