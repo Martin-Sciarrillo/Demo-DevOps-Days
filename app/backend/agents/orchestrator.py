@@ -1,12 +1,34 @@
 import asyncio
+import logging
 from pathlib import Path
 from dotenv import load_dotenv
+
+logger = logging.getLogger(__name__)
 load_dotenv(Path(__file__).resolve().parents[3] / ".env")
 from azure.identity.aio import DefaultAzureCredential
 
 from agent_framework import Agent, Message, Content
 from agent_framework_openai import OpenAIChatCompletionClient
 from agent_framework.azure import AzureAISearchContextProvider
+
+
+class TrackingSearchProvider(AzureAISearchContextProvider):
+    """Wraps AzureAISearchContextProvider to capture Foundry IQ source references per query."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.last_references: list = []
+
+    async def _agentic_search(self, messages):
+        result_messages = await super()._agentic_search(messages)
+        refs = []
+        for msg in result_messages:
+            if msg.contents:
+                for content in msg.contents:
+                    if hasattr(content, "annotations") and content.annotations:
+                        refs.extend(content.annotations)
+        self.last_references = refs
+        return result_messages
 
 from config import OPENAI_ENDPOINT, SEARCH_ENDPOINT, MODEL, HR_INDEX, MKT_INDEX, PRD_INDEX, KB_POLITICAS, KB_RUNBOOKS, KB_HERRAMIENTAS
 
@@ -105,20 +127,23 @@ class OrchestratorState:
             credential=self._credential,
             api_version="2024-12-01-preview",
         )
-        self._hr_search = AzureAISearchContextProvider(
+        self._hr_search = TrackingSearchProvider(
             "hr-search", endpoint=SEARCH_ENDPOINT,
             credential=self._credential, mode="agentic",
             knowledge_base_name=KB_POLITICAS, retrieval_reasoning_effort="medium",
+            knowledge_base_output_mode="answer_synthesis",
         )
-        self._marketing_search = AzureAISearchContextProvider(
+        self._marketing_search = TrackingSearchProvider(
             "marketing-search", endpoint=SEARCH_ENDPOINT,
             credential=self._credential, mode="agentic",
             knowledge_base_name=KB_RUNBOOKS, retrieval_reasoning_effort="medium",
+            knowledge_base_output_mode="answer_synthesis",
         )
-        self._products_search = AzureAISearchContextProvider(
+        self._products_search = TrackingSearchProvider(
             "products-search", endpoint=SEARCH_ENDPOINT,
             credential=self._credential, mode="agentic",
             knowledge_base_name=KB_HERRAMIENTAS, retrieval_reasoning_effort="medium",
+            knowledge_base_output_mode="answer_synthesis",
         )
         self.router = Agent(client=self._client, instructions=ROUTER_INSTRUCTIONS)
         self.specialists = {
@@ -154,12 +179,102 @@ async def shutdown():
         _state = None
 
 
+_DOC_TITLES: dict[str, str] = {
+    "pol-001": "Proceso de Postmortem Blameless",
+    "pol-002": "Política de On-Call y Rotaciones de Guardia",
+    "pol-003": "Niveles de Severidad (SEV-1 a SEV-4)",
+    "pol-004": "Política de SLA, SLO y Error Budget",
+    "pol-005": "Política de Escalación de Incidentes",
+    "run-001": "Runbook: CrashLoopBackOff en EKS",
+    "run-002": "Runbook: Alto CPU/Memoria en Nodos",
+    "run-003": "Runbook: Connection Pool Exhausted (RDS)",
+    "run-004": "Runbook: Certificado SSL Expirado",
+    "run-005": "Runbook: Rollback de Deploy en Producción",
+    "her-001": "Vault — Gestión de Secretos",
+    "her-002": "Kubernetes/EKS — Plataforma de Contenedores",
+    "her-003": "Terraform — Infraestructura como Código",
+    "her-004": "ArgoCD — GitOps y Deploy Continuo",
+    "her-005": "Datadog y Grafana — Observabilidad",
+}
+
+
+def _extract_title_from_source_data(source_data) -> str:
+    """Try every known shape of source_data to find a human-readable title."""
+    if not source_data:
+        return ""
+    import json as _json
+    if isinstance(source_data, str):
+        try:
+            source_data = _json.loads(source_data)
+        except Exception:
+            return source_data[:80]
+    if isinstance(source_data, dict):
+        for key in ("title", "Title", "name", "Name", "chunk_id", "doc_key", "id"):
+            val = source_data.get(key)
+            if val and not str(val).isdigit():
+                return str(val)
+    return ""
+
+
+def _serialize_annotation(ann) -> dict:
+    props = ann.get("additional_properties", {}) if hasattr(ann, "get") else {}
+    if not isinstance(props, dict):
+        props = {}
+
+    # --- title ---
+    title = ann.get("title", "") if hasattr(ann, "get") else getattr(ann, "title", "")
+    # Foundry IQ returns sequential integers ("0","1","4") as title for internal refs — discard them
+    if not title or str(title).isdigit():
+        title = _extract_title_from_source_data(props.get("source_data"))
+    doc_key = props.get("doc_key", "")
+    if not title or str(title).isdigit():
+        # Buscar en mapa de títulos conocidos por doc_key
+        if doc_key and doc_key in _DOC_TITLES:
+            title = _DOC_TITLES[doc_key]
+        elif doc_key and not str(doc_key).isdigit():
+            title = doc_key
+        else:
+            title = "Documento interno"
+
+    # --- url --- solo usar si es HTTP real; nunca asignar el activity_source numérico
+    raw_url = ann.get("url", "") if hasattr(ann, "get") else getattr(ann, "url", "")
+    url = raw_url if isinstance(raw_url, str) and raw_url.startswith("http") else ""
+    if not url:
+        sd = props.get("source_data")
+        if isinstance(sd, dict):
+            sd_url = sd.get("url", "") or ""
+            if isinstance(sd_url, str) and sd_url.startswith("http"):
+                url = sd_url
+
+    # --- debug log (remove after confirming titles are correct) ---
+    logger.debug("annotation title=%r url=%r source_data=%r doc_key=%r",
+                 title, url, props.get("source_data"), props.get("doc_key"))
+
+    return {
+        "title": title,
+        "url": url,
+        "score": props.get("reranker_score"),
+        "activity_source": str(props.get("activity_source", "")),
+        "reference_type": props.get("reference_type", ""),
+        "doc_key": props.get("doc_key", ""),
+    }
+
+
 async def run_single_query(query: str) -> tuple[str, str, list]:
     """Single-shot query for the FastAPI endpoint. Uses singleton state."""
     state = await get_state()
     route = await route_query(state.router, query)
     resp = await state.specialists[route].run(user_message(query))
-    return route, resp.text or "", []
+
+    provider_map = {
+        "politicas": state._hr_search,
+        "runbooks": state._marketing_search,
+        "herramientas": state._products_search,
+    }
+    provider = provider_map[route]
+    sources = [_serialize_annotation(ann) for ann in (provider.last_references or [])]
+
+    return route, resp.text or "", sources
 
 
 async def run_orchestrator():
@@ -178,6 +293,7 @@ async def run_orchestrator():
                 mode="agentic",
                 knowledge_base_name=KB_POLITICAS,
                 retrieval_reasoning_effort="medium",
+                knowledge_base_output_mode="answer_synthesis",
             ) as hr_search,
             AzureAISearchContextProvider(
                 "marketing-search",
@@ -186,6 +302,7 @@ async def run_orchestrator():
                 mode="agentic",
                 knowledge_base_name=KB_RUNBOOKS,
                 retrieval_reasoning_effort="medium",
+                knowledge_base_output_mode="answer_synthesis",
             ) as marketing_search,
             AzureAISearchContextProvider(
                 "products-search",
@@ -194,6 +311,7 @@ async def run_orchestrator():
                 mode="agentic",
                 knowledge_base_name=KB_HERRAMIENTAS,
                 retrieval_reasoning_effort="medium",
+                knowledge_base_output_mode="answer_synthesis",
             ) as products_search,
         ):
             router = Agent(client=client, instructions=ROUTER_INSTRUCTIONS)

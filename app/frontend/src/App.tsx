@@ -1,5 +1,42 @@
 import { useState } from "react";
 
+const VENDORS: { match: (url: string) => boolean; name: string; color: string; bg: string }[] = [
+  { match: (u) => u.includes("aws.amazon.com") || u.includes("amazon.com"), name: "AWS", color: "#FF9900", bg: "#FFF3E0" },
+  { match: (u) => u.includes("hashicorp.com/terraform") || u.includes("registry.terraform.io"), name: "Terraform", color: "#7B42BC", bg: "#F3E8FF" },
+  { match: (u) => u.includes("hashicorp.com/vault") || u.includes("hashicorp.com/consul"), name: "HashiCorp", color: "#1B1B1B", bg: "#F0F0F0" },
+  { match: (u) => u.includes("pagerduty.com"), name: "PagerDuty", color: "#06AC38", bg: "#E8F8ED" },
+  { match: (u) => u.includes("ansible.com") || u.includes("galaxy.ansible.com"), name: "Ansible", color: "#EE0000", bg: "#FEE8E8" },
+];
+
+const INTERNAL_KS: Record<string, { name: string; color: string; bg: string }> = {
+  "ks-politicas":    { name: "Wiki Políticas",   color: "#6366F1", bg: "#EEF2FF" },
+  "ks-runbooks":     { name: "Wiki Runbooks",     color: "#0EA5E9", bg: "#E0F2FE" },
+  "ks-herramientas": { name: "Wiki Herramientas", color: "#059669", bg: "#D1FAE5" },
+  "index-politicas":    { name: "Wiki Políticas",   color: "#6366F1", bg: "#EEF2FF" },
+  "index-runbooks":     { name: "Wiki Runbooks",     color: "#0EA5E9", bg: "#E0F2FE" },
+  "index-herramientas": { name: "Wiki Herramientas", color: "#059669", bg: "#D1FAE5" },
+};
+
+function detectVendor(url: string, activitySource?: string | number): { name: string; color: string; bg: string } {
+  // 1. activity_source identifica el KS interno exacto — normalizar a string
+  const actStr = activitySource != null ? String(activitySource) : "";
+  if (actStr) {
+    for (const [key, val] of Object.entries(INTERNAL_KS)) {
+      if (actStr.includes(key)) return val;
+    }
+  }
+  // 2. URL de dominio externo
+  for (const v of VENDORS) {
+    if (v.match(url)) return { name: v.name, color: v.color, bg: v.bg };
+  }
+  // 3. URL path interno (wiki-interno/politicas/...)
+  if (url.includes("politicas")) return INTERNAL_KS["ks-politicas"];
+  if (url.includes("runbooks"))  return INTERNAL_KS["ks-runbooks"];
+  if (url.includes("herramientas")) return INTERNAL_KS["ks-herramientas"];
+  // 4. fallback
+  return { name: "Interno", color: "#6366F1", bg: "#EEF2FF" };
+}
+
 const formatMarkdown = (text: string): string => {
   return text
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
@@ -8,10 +45,14 @@ const formatMarkdown = (text: string): string => {
 };
 
 interface SourceInfo {
-  kb: string;
+  kb?: string;
   title?: string;
   filepath?: string;
   url?: string;
+  score?: number;
+  activity_source?: string | number;
+  reference_type?: string;
+  doc_key?: string;
 }
 
 interface Message {
@@ -49,6 +90,13 @@ interface AgentInfo {
   knowledgeSources: string[];
 }
 
+interface KnowledgeSource {
+  name: string;
+  type: "internal" | "web";
+  url?: string;
+  vendor?: string;
+}
+
 interface KBInfo {
   id: string;
   name: string;
@@ -56,7 +104,7 @@ interface KBInfo {
   description: string;
   retrievalMode: string;
   model: string;
-  knowledgeSources: string[];
+  knowledgeSources: KnowledgeSource[];
 }
 
 const agents: AgentInfo[] = [
@@ -104,45 +152,46 @@ const agents: AgentInfo[] = [
 
 const knowledgeBases: KBInfo[] = [
   {
-    id: "index-politicas",
+    id: "kb-politicas",
     name: "KB Políticas",
     icon: "",
-    description:
-      "Políticas de on-call, guardia, escalado, SLA/SLO, postmortem, cultura blameless y certificaciones.",
-    retrievalMode: "Semantic Search",
+    description: "Políticas de on-call, guardia, escalado, SLA/SLO, postmortem, cultura blameless y certificaciones.",
+    retrievalMode: "Agentic Retrieval",
     model: "gpt-4o",
-    knowledgeSources: ["index-politicas"],
+    knowledgeSources: [
+      { name: "Wiki Políticas (interno)", type: "internal" },
+      { name: "AWS Well-Architected", type: "web", url: "https://docs.aws.amazon.com/wellarchitected", vendor: "AWS" },
+      { name: "PagerDuty Support Docs", type: "web", url: "https://support.pagerduty.com", vendor: "PagerDuty" },
+    ],
   },
   {
-    id: "index-runbooks",
+    id: "kb-runbooks",
     name: "KB Runbooks",
     icon: "",
-    description:
-      "Runbooks operacionales, playbooks de incidentes, procedimientos de respuesta a alertas y troubleshooting.",
-    retrievalMode: "Semantic Search",
+    description: "Runbooks operacionales, playbooks de incidentes, procedimientos de respuesta a alertas y troubleshooting.",
+    retrievalMode: "Agentic Retrieval",
     model: "gpt-4o",
-    knowledgeSources: ["index-runbooks"],
+    knowledgeSources: [
+      { name: "Wiki Runbooks (interno)", type: "internal" },
+      { name: "Terraform Docs", type: "web", url: "https://developer.hashicorp.com/terraform", vendor: "Terraform" },
+      { name: "AWS EKS & Systems Manager", type: "web", url: "https://docs.aws.amazon.com/eks", vendor: "AWS" },
+    ],
   },
   {
-    id: "index-herramientas",
+    id: "kb-herramientas",
     name: "KB Herramientas",
     icon: "",
-    description:
-      "Catálogo de herramientas de infraestructura, CI/CD, monitoring, observabilidad y gestión de secretos.",
-    retrievalMode: "Semantic Search",
+    description: "Catálogo de herramientas de infraestructura, CI/CD, monitoring, observabilidad y gestión de secretos.",
+    retrievalMode: "Agentic Retrieval",
     model: "gpt-4o",
-    knowledgeSources: ["index-herramientas"],
+    knowledgeSources: [
+      { name: "Wiki Herramientas (interno)", type: "internal" },
+      { name: "Ansible Docs", type: "web", url: "https://docs.ansible.com", vendor: "Ansible" },
+      { name: "HashiCorp Vault & Consul", type: "web", url: "https://developer.hashicorp.com/vault", vendor: "HashiCorp" },
+    ],
   },
 ];
 
-const sourceLogos: Record<string, string> = {
-  "politicas-agent": "📋",
-  "runbooks-agent": "📖",
-  "herramientas-agent": "🛠️",
-  "index-politicas": "📋",
-  "index-runbooks": "📖",
-  "index-herramientas": "🛠️",
-};
 
 const predefinedQuestions = [
   { text: "¿Cuál es el proceso de postmortem blameless?", agent: "Políticas" },
@@ -225,20 +274,19 @@ function App() {
         herramientas: "index-herramientas",
       };
       addLog("route", `Derivado a ${data.agent || "especialista"}`);
-      addLog(
-        "query",
-        `${data.agent} consultando ${kbMap[agentType]} via búsqueda semántica...`
-      );
 
-      // Log retrieved documents
+      const kbName = kbMap[agentType] || agentType;
+      addLog("query", `Foundry IQ: analizando intent sobre ${kbName}...`);
+      addLog("query", `Consultando knowledge sources (interno + multi-vendor)...`);
+
       const sources = data.sources as SourceInfo[];
       if (sources && sources.length > 0) {
-        const docNames = sources
-          .map((s: SourceInfo) => s.title || s.filepath || "documento")
-          .join(", ");
-        addLog("response", `Recuperado de ${kbMap[agentType]}: ${docNames}`);
+        const vendorSet = new Set(sources.map((s) => detectVendor(s.url || "", s.activity_source).name));
+        const vendorList = Array.from(vendorSet).join(", ");
+        addLog("response", `Foundry IQ recuperó ${sources.length} fuentes: ${vendorList}`);
+        addLog("response", `Re-ranking y síntesis completados → respuesta generada`);
       } else {
-        addLog("response", `Documentos recuperados de ${kbMap[agentType]}`);
+        addLog("response", `Foundry IQ consultó ${kbName} → respuesta sintetizada`);
       }
 
       const assistantMessage: Message = {
@@ -372,16 +420,34 @@ function App() {
                 <div className="details-section">
                   <span className="details-label">Knowledge Sources</span>
                   <div className="details-sources">
-                    {(selectedAgent?.knowledgeSources || selectedKB?.knowledgeSources || []).map(
-                      (ks) => (
-                        <span key={ks} className="details-source-tag">
-                          {ks}
-                        </span>
-                      )
-                    )}
-                    {selectedAgent?.knowledgeSources?.length === 0 && !selectedKB && (
+                    {selectedAgent && selectedAgent.knowledgeSources.length === 0 && (
                       <span className="details-value">Ninguna (solo enrutamiento)</span>
                     )}
+                    {selectedAgent && selectedAgent.knowledgeSources.length > 0 && (
+                      selectedAgent.knowledgeSources.map((ks) => (
+                        <span key={ks} className="details-source-tag">{ks}</span>
+                      ))
+                    )}
+                    {selectedKB && selectedKB.knowledgeSources.map((ks) => {
+                      const vendor = ks.vendor ? detectVendor(ks.url || "", ks.vendor) : detectVendor("", "ks-" + selectedKB.id.replace("kb-",""));
+                      return (
+                        <div key={ks.name} className="details-ks-row">
+                          <span
+                            className="details-ks-badge"
+                            style={{ background: vendor.bg, color: vendor.color, borderColor: vendor.color + "44" }}
+                          >
+                            {ks.type === "internal" ? "Interno" : ks.vendor}
+                          </span>
+                          {ks.url ? (
+                            <a href={ks.url} target="_blank" rel="noreferrer" className="details-ks-name">
+                              {ks.name}
+                            </a>
+                          ) : (
+                            <span className="details-ks-name">{ks.name}</span>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -427,7 +493,12 @@ function App() {
                   <span className="node-title">Agente Políticas</span>
                 </div>
                 <div className="node-kb">
-                  <span className="kb-badge">index-politicas</span>
+                  <span className="kb-badge">kb-politicas</span>
+                </div>
+                <div className="node-sources">
+                  <span className="node-source-tag internal">Wiki</span>
+                  <span className="node-source-tag aws">AWS</span>
+                  <span className="node-source-tag pagerduty">PagerDuty</span>
                 </div>
               </div>
 
@@ -437,7 +508,12 @@ function App() {
                   <span className="node-title">Agente Runbooks</span>
                 </div>
                 <div className="node-kb">
-                  <span className="kb-badge">index-runbooks</span>
+                  <span className="kb-badge">kb-runbooks</span>
+                </div>
+                <div className="node-sources">
+                  <span className="node-source-tag internal">Wiki</span>
+                  <span className="node-source-tag terraform">Terraform</span>
+                  <span className="node-source-tag aws">AWS</span>
                 </div>
               </div>
 
@@ -447,7 +523,12 @@ function App() {
                   <span className="node-title">Agente Herramientas</span>
                 </div>
                 <div className="node-kb">
-                  <span className="kb-badge">index-herramientas</span>
+                  <span className="kb-badge">kb-herramientas</span>
+                </div>
+                <div className="node-sources">
+                  <span className="node-source-tag internal">Wiki</span>
+                  <span className="node-source-tag ansible">Ansible</span>
+                  <span className="node-source-tag hashicorp">HashiCorp</span>
                 </div>
               </div>
             </div>
@@ -536,7 +617,7 @@ function App() {
               <div key={i} className={`message ${msg.role}`}>
                 {msg.agent && (
                   <div className="message-header">
-                    <img src="/assets/capi.png" alt="DevOps Days" className="agent-icon-img" />
+                    <img src="/assets/capi.png" alt="Capi" className="agent-icon-img" />
                     <span className="agent-name">{msg.agent}</span>
                   </div>
                 )}
@@ -544,29 +625,71 @@ function App() {
                   className="message-content"
                   dangerouslySetInnerHTML={{ __html: formatMarkdown(msg.content) }}
                 />
-                {msg.agent && (
-                  <div className="message-sources">
-                    <span className="source-label">Fuentes:</span>
-                    <div className="source-list">
-                      {msg.sources && msg.sources.length > 0 ? (
-                        msg.sources.map((src, idx) => (
-                          <span key={idx} className="source-doc">
-                            <span className="source-doc-title">{src.title || src.filepath || "Document"}</span>
-                            <span className="source-doc-kb">({src.kb})</span>
-                          </span>
-                        ))
-                      ) : (
-                        <span className="source-name">
-                          {msg.agent.replace("-agent", "") === "politicas"
-                            ? "index-politicas"
-                            : msg.agent.replace("-agent", "") === "runbooks"
-                            ? "index-runbooks"
-                            : "index-herramientas"}
-                        </span>
-                      )}
+                {msg.agent && msg.sources && msg.sources.length > 0 && (() => {
+                  // Deduplicate by title+url, then sort: Interno first, then by vendor name
+                  const seen = new Set<string>();
+                  const unique = msg.sources.filter((s) => {
+                    const key = (s.title || "") + (s.url || "");
+                    if (seen.has(key)) return false;
+                    seen.add(key);
+                    return true;
+                  });
+                  const sorted = [...unique].sort((a, b) => {
+                    const va = detectVendor(a.url || "", a.activity_source).name;
+                    const vb = detectVendor(b.url || "", b.activity_source).name;
+                    if (va === "Interno" && vb !== "Interno") return -1;
+                    if (vb === "Interno" && va !== "Interno") return 1;
+                    return va.localeCompare(vb);
+                  });
+                  // Group by vendor
+                  const groups: Record<string, typeof sorted> = {};
+                  for (const src of sorted) {
+                    const v = detectVendor(src.url || "", src.activity_source).name;
+                    if (!groups[v]) groups[v] = [];
+                    groups[v].push(src);
+                  }
+                  return (
+                    <div className="message-sources">
+                      <span className="source-label">Fuentes Foundry IQ ({unique.length})</span>
+                      <div className="source-cards">
+                        {Object.entries(groups).map(([vendorName, srcs]) => {
+                          const vendor = detectVendor(srcs[0].url || "", srcs[0].activity_source);
+                          return (
+                            <div key={vendorName} className="source-group">
+                              <span
+                                className="source-group-header"
+                                style={{ color: vendor.color, borderColor: vendor.color + "55" }}
+                              >
+                                {vendorName} ({srcs.length})
+                              </span>
+                              {srcs.map((src, idx) => {
+                                const title = src.title || "Documento";
+                                const score = src.score != null ? Math.round(src.score * 100) / 100 : null;
+                                const isExternalUrl = src.url && src.url.startsWith("http");
+                                return (
+                                  <div key={idx} className="source-card">
+                                    {isExternalUrl ? (
+                                      <a href={src.url} target="_blank" rel="noreferrer" className="source-card-title">
+                                        {title}
+                                      </a>
+                                    ) : (
+                                      <span className="source-card-title" title={src.url || src.doc_key || ""}>
+                                        {title}
+                                      </span>
+                                    )}
+                                    {score != null && (
+                                      <span className="source-card-score">↑{score}</span>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
               </div>
             ))}
             {isLoading && (

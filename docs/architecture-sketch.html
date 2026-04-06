@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FoundryIQ + Agent Framework — Arquitectura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #ede8e0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      font-family: 'Caveat', cursive;
+      gap: 0;
+    }
+    canvas {
+      background: #fdf8f0;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="diagram" width="1400" height="1100"></canvas>
+  <script src="https://unpkg.com/roughjs/bundled/rough.js"></script>
+  <script>
+    const canvas = document.getElementById('diagram');
+    const ctx = canvas.getContext('2d');
+    const rc = rough.canvas(canvas);
+
+    const ROUGHNESS = 1.4;
+    const BOWING = 1.2;
+    const TEXT_COLOR = '#1a1a1a';
+    const STROKE_COLOR = '#2a2a2a';
+
+    // ── helpers ──────────────────────────────────────────────────────────────
+
+    function drawBox(rc, ctx, x, y, w, h, label, fillColor, subLabel) {
+      rc.rectangle(x, y, w, h, {
+        roughness: ROUGHNESS,
+        bowing: BOWING,
+        fill: fillColor,
+        fillStyle: 'solid',
+        stroke: STROKE_COLOR,
+        strokeWidth: 1.8,
+      });
+
+      ctx.fillStyle = TEXT_COLOR;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      if (subLabel) {
+        ctx.font = '600 15px Caveat';
+        ctx.fillText(label, x + w / 2, y + h / 2 - 8);
+        ctx.font = '400 13px Caveat';
+        ctx.fillStyle = '#555';
+        ctx.fillText(subLabel, x + w / 2, y + h / 2 + 9);
+        ctx.fillStyle = TEXT_COLOR;
+      } else {
+        ctx.font = '600 17px Caveat';
+        ctx.fillText(label, x + w / 2, y + h / 2);
+      }
+    }
+
+    function drawSmallBox(rc, ctx, x, y, w, h, label, fillColor) {
+      rc.rectangle(x, y, w, h, {
+        roughness: ROUGHNESS,
+        bowing: BOWING,
+        fill: fillColor,
+        fillStyle: 'solid',
+        stroke: STROKE_COLOR,
+        strokeWidth: 1.5,
+      });
+      ctx.fillStyle = TEXT_COLOR;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font = '600 14px Caveat';
+      ctx.fillText(label, x + w / 2, y + h / 2);
+    }
+
+    function drawArrow(rc, x1, y1, x2, y2) {
+      rc.line(x1, y1, x2, y2, {
+        roughness: ROUGHNESS * 0.9,
+        bowing: BOWING * 0.7,
+        stroke: STROKE_COLOR,
+        strokeWidth: 1.6,
+      });
+
+      // arrowhead
+      const angle = Math.atan2(y2 - y1, x2 - x1);
+      const arrowLen = 10;
+      const arrowAngle = 0.42;
+      const ax1 = x2 - arrowLen * Math.cos(angle - arrowAngle);
+      const ay1 = y2 - arrowLen * Math.sin(angle - arrowAngle);
+      const ax2 = x2 - arrowLen * Math.cos(angle + arrowAngle);
+      const ay2 = y2 - arrowLen * Math.sin(angle + arrowAngle);
+      rc.line(x2, y2, ax1, ay1, { roughness: 0.8, stroke: STROKE_COLOR, strokeWidth: 1.6 });
+      rc.line(x2, y2, ax2, ay2, { roughness: 0.8, stroke: STROKE_COLOR, strokeWidth: 1.6 });
+    }
+
+    function drawText(ctx, text, x, y, size, weight, color) {
+      ctx.fillStyle = color || TEXT_COLOR;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font = `${weight || 600} ${size}px Caveat`;
+      ctx.fillText(text, x, y);
+    }
+
+    function drawBadge(ctx, text, x, y, bgColor, textColor) {
+      const pad = 5;
+      ctx.font = '600 11px Caveat';
+      const tw = ctx.measureText(text).width;
+      const bw = tw + pad * 2;
+      const bh = 16;
+      ctx.fillStyle = bgColor;
+      ctx.beginPath();
+      ctx.roundRect(x - bw / 2, y - bh / 2, bw, bh, 4);
+      ctx.fill();
+      ctx.strokeStyle = textColor;
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+      ctx.fillStyle = textColor;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, x, y);
+    }
+
+    // ── layout constants ─────────────────────────────────────────────────────
+
+    const CX = 700; // canvas center x
+
+    // Row 1 — User
+    const userW = 280, userH = 60;
+    const userX = CX - userW / 2, userY = 80;
+
+    // Row 2 — Orchestrator
+    const orchW = 320, orchH = 70;
+    const orchX = CX - orchW / 2, orchY = 200;
+
+    // Row 3 — Agents  (centers at 220, 700, 1180  → narrower spacing)
+    const agentW = 240, agentH = 65;
+    const agentCenters = [220, 700, 1180];
+    const agentY = 340;
+
+    // Row 4 — KBs
+    const kbW = 220, kbH = 60;
+    const kbY = 470;
+
+    // Row 5 — Knowledge Sources (3 cols × 3 rows)
+    const ksW = 200, ksH = 45;
+    const ksGapY = 12;
+    const ksStartY = 590;
+
+    // Row 6 — Response
+    const respW = 300, respH = 60;
+    const respX = CX - respW / 2, respY = 950;
+
+    // ── color palette ────────────────────────────────────────────────────────
+
+    const C = {
+      user: '#fff9c4',
+      orch: '#ede7f6',
+      agent: '#e8eaf6',
+      kb: '#e3f2fd',
+      wikiInter: '#eef2ff',
+      aws: '#fff3e0',
+      pagerduty: '#e8f8ed',
+      terraform: '#f3e8ff',
+      ansible: '#fee8e8',
+      hashicorp: '#f0f0f0',
+      response: '#e8f5e9',
+    };
+
+    // Knowledge sources per column
+    const ksSources = [
+      // col 0 — Políticas
+      [
+        { label: 'Wiki Políticas',      fill: C.wikiInter, badge: null },
+        { label: 'AWS Well-Architected', fill: C.aws,      badge: 'AWS' },
+        { label: 'PagerDuty',           fill: C.pagerduty, badge: 'PD' },
+      ],
+      // col 1 — Runbooks
+      [
+        { label: 'Wiki Runbooks', fill: C.wikiInter, badge: null },
+        { label: 'Terraform',     fill: C.terraform,  badge: 'TF' },
+        { label: 'AWS EKS',       fill: C.aws,        badge: 'AWS' },
+      ],
+      // col 2 — Herramientas
+      [
+        { label: 'Wiki Herramientas', fill: C.wikiInter,  badge: null },
+        { label: 'Ansible',           fill: C.ansible,    badge: 'ANS' },
+        { label: 'HashiCorp Vault',   fill: C.hashicorp,  badge: 'HC' },
+      ],
+    ];
+
+    const agentLabels   = ['Agente Políticas', 'Agente Runbooks', 'Agente Herramientas'];
+    const kbLabels      = ['kb-politicas',      'kb-runbooks',     'kb-herramientas'];
+
+    // ── wait for font then draw ───────────────────────────────────────────────
+
+    document.fonts.ready.then(() => {
+
+      // ── background ───────────────────────────────────────────────────────
+      ctx.fillStyle = '#fdf8f0';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // slight paper texture lines
+      ctx.strokeStyle = 'rgba(0,0,0,0.03)';
+      ctx.lineWidth = 1;
+      for (let yy = 0; yy < canvas.height; yy += 28) {
+        ctx.beginPath();
+        ctx.moveTo(0, yy);
+        ctx.lineTo(canvas.width, yy);
+        ctx.stroke();
+      }
+
+      // ── title ─────────────────────────────────────────────────────────────
+      drawText(ctx, 'FoundryIQ + Agent Framework — Arquitectura', CX, 40, 30, 700, '#1a1a1a');
+
+      // ── user ──────────────────────────────────────────────────────────────
+      drawBox(rc, ctx, userX, userY, userW, userH, '👷 Ingeniero de guardia', C.user);
+      // add small role caption
+      ctx.font = '400 13px Caveat';
+      ctx.fillStyle = '#666';
+      ctx.textAlign = 'center';
+      ctx.fillText('(usuario)', CX, userY + userH + 14);
+
+      // ── orchestrator ──────────────────────────────────────────────────────
+      drawBox(rc, ctx, orchX, orchY, orchW, orchH,
+        'Orchestrator Agent', C.orch,
+        'keyword routing + LLM fallback');
+
+      // ── arrows: user → orch ───────────────────────────────────────────────
+      drawArrow(rc, CX, userY + userH, CX, orchY);
+
+      // ── agents + arrows from orch ─────────────────────────────────────────
+      agentCenters.forEach((cx, i) => {
+        const ax = cx - agentW / 2;
+        drawBox(rc, ctx, ax, agentY, agentW, agentH, agentLabels[i], C.agent);
+
+        // orch bottom → agent top
+        const orchBottomX = orchX + (orchW * (i + 1)) / (agentCenters.length + 1);
+        drawArrow(rc, orchBottomX, orchY + orchH, cx, agentY);
+      });
+
+      // ── FOUNDRY IQ label above KB row ─────────────────────────────────────
+      const fiqY = kbY - 26;
+      drawText(ctx, '— FOUNDRY IQ KBs —', CX, fiqY, 15, 600, '#1565c0');
+
+      // decorative bracket
+      rc.line(100, fiqY - 10, 100, kbY + kbH + 10, {
+        roughness: 1.2, stroke: '#90caf9', strokeWidth: 1.2
+      });
+      rc.line(1300, fiqY - 10, 1300, kbY + kbH + 10, {
+        roughness: 1.2, stroke: '#90caf9', strokeWidth: 1.2
+      });
+      rc.line(100, fiqY - 10, 1300, fiqY - 10, {
+        roughness: 1.2, stroke: '#90caf9', strokeWidth: 1.0
+      });
+
+      // ── KBs ───────────────────────────────────────────────────────────────
+      agentCenters.forEach((cx, i) => {
+        const kx = cx - kbW / 2;
+        drawBox(rc, ctx, kx, kbY, kbW, kbH, kbLabels[i], C.kb);
+
+        // agent bottom → kb top
+        drawArrow(rc, cx, agentY + agentH, cx, kbY);
+      });
+
+      // ── knowledge sources ─────────────────────────────────────────────────
+      agentCenters.forEach((cx, col) => {
+        ksSources[col].forEach((ks, row) => {
+          const kx = cx - ksW / 2;
+          const ky = ksStartY + row * (ksH + ksGapY);
+          drawSmallBox(rc, ctx, kx, ky, ksW, ksH, ks.label, ks.fill);
+
+          // badge
+          if (ks.badge) {
+            const badgeColors = {
+              AWS:  { bg: '#ff9800', text: '#fff' },
+              PD:   { bg: '#06ac38', text: '#fff' },
+              TF:   { bg: '#7b1fa2', text: '#fff' },
+              ANS:  { bg: '#c62828', text: '#fff' },
+              HC:   { bg: '#555',    text: '#fff' },
+            };
+            const bc = badgeColors[ks.badge] || { bg: '#888', text: '#fff' };
+            drawBadge(ctx, ks.badge, kx + ksW + 22, ky + ksH / 2, bc.bg, bc.text);
+          }
+        });
+
+        // kb bottom → first KS top
+        drawArrow(rc, cx, kbY + kbH, cx, ksStartY);
+
+        // lines between stacked KS boxes
+        for (let row = 0; row < ksSources[col].length - 1; row++) {
+          const fromY = ksStartY + row * (ksH + ksGapY) + ksH;
+          const toY   = fromY + ksGapY;
+          drawArrow(rc, cx, fromY, cx, toY);
+        }
+      });
+
+      // ── response box ──────────────────────────────────────────────────────
+      drawBox(rc, ctx, respX, respY, respW, respH, '✅ Respuesta Fundamentada', C.response);
+
+      // converging arrows from bottom of each last KS → response
+      agentCenters.forEach((cx) => {
+        const lastKY = ksStartY + (ksSources[0].length - 1) * (ksH + ksGapY) + ksH;
+        // line down from last KS to a collection point
+        const midY = respY - 40;
+        rc.line(cx, lastKY, cx, midY, {
+          roughness: ROUGHNESS * 0.8,
+          bowing: BOWING * 0.5,
+          stroke: STROKE_COLOR,
+          strokeWidth: 1.5,
+        });
+        rc.line(cx, midY, CX, midY, {
+          roughness: ROUGHNESS * 0.8,
+          bowing: BOWING * 0.3,
+          stroke: STROKE_COLOR,
+          strokeWidth: 1.5,
+        });
+      });
+      // single arrow from midpoint down to response
+      drawArrow(rc, CX, respY - 40, CX, respY);
+
+      // ── legend ────────────────────────────────────────────────────────────
+      const legendX = 30;
+      const legendY = 1020;
+      const items = [
+        { fill: C.agent,     label: 'Agente especialista' },
+        { fill: C.kb,        label: 'Foundry IQ KB' },
+        { fill: C.wikiInter, label: 'Wiki interna' },
+        { fill: C.aws,       label: 'AWS' },
+        { fill: C.pagerduty, label: 'PagerDuty' },
+        { fill: C.terraform, label: 'Terraform' },
+        { fill: C.ansible,   label: 'Ansible' },
+        { fill: C.hashicorp, label: 'HashiCorp' },
+      ];
+      ctx.font = '600 14px Caveat';
+      ctx.fillStyle = '#555';
+      ctx.textAlign = 'left';
+      ctx.fillText('Leyenda:', legendX, legendY - 4);
+      items.forEach((item, i) => {
+        const ix = legendX + i * 148;
+        ctx.fillStyle = item.fill;
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 1;
+        ctx.fillRect(ix, legendY + 10, 16, 16);
+        ctx.strokeRect(ix, legendY + 10, 16, 16);
+        ctx.fillStyle = '#333';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.font = '400 13px Caveat';
+        ctx.fillText(item.label, ix + 22, legendY + 18);
+      });
+
+    });
+  </script>
+</body>
+</html>
