@@ -30,19 +30,19 @@ class TrackingSearchProvider(AzureAISearchContextProvider):
         self.last_references = refs
         return result_messages
 
-from config import OPENAI_ENDPOINT, SEARCH_ENDPOINT, MODEL, HR_INDEX, MKT_INDEX, PRD_INDEX, KB_POLITICAS, KB_RUNBOOKS, KB_HERRAMIENTAS
+from config import OPENAI_ENDPOINT, SEARCH_ENDPOINT, MODEL, KB_POLITICAS, KB_RUNBOOKS, KB_HERRAMIENTAS
 
-HR_INSTRUCTIONS = """Sos el Agente de Políticas DevOps de DevOps Days CORP.
+POLITICAS_INSTRUCTIONS = """Sos el Agente de Políticas DevOps de DevOps Days CORP.
 Respondé preguntas sobre políticas de on-call, rotaciones de guardia, niveles de severidad de incidentes, SLAs/SLOs,
 proceso de postmortem, cultura blameless, compensación de guardia y certificaciones usando la base de conocimiento.
 Respondé siempre en castellano rioplatense. Sé específico y citá las fuentes cuando sea posible."""
 
-MARKETING_INSTRUCTIONS = """Sos el Agente de Runbooks de DevOps Days CORP.
+RUNBOOKS_INSTRUCTIONS = """Sos el Agente de Runbooks de DevOps Days CORP.
 Respondé preguntas sobre runbooks operacionales, playbooks de incidentes, procedimientos de respuesta a alertas
 y pasos de troubleshooting usando la base de conocimiento.
 Respondé siempre en castellano rioplatense. Sé específico, listá los pasos y citá las fuentes."""
 
-PRODUCTS_INSTRUCTIONS = """Sos el Agente de Herramientas de DevOps Days CORP.
+HERRAMIENTAS_INSTRUCTIONS = """Sos el Agente de Herramientas de DevOps Days CORP.
 Respondé preguntas sobre el catálogo de herramientas internas: plataformas de infraestructura, CI/CD, monitoring,
 observabilidad, seguridad y gestión de secretos usando la base de conocimiento.
 Respondé siempre en castellano rioplatense. Sé específico e incluí casos de uso y cómo acceder a cada herramienta."""
@@ -147,9 +147,9 @@ class OrchestratorState:
         )
         self.router = Agent(client=self._client, instructions=ROUTER_INSTRUCTIONS)
         self.specialists = {
-            "politicas": Agent(client=self._client, context_providers=[self._hr_search], instructions=HR_INSTRUCTIONS),
-            "runbooks": Agent(client=self._client, context_providers=[self._marketing_search], instructions=MARKETING_INSTRUCTIONS),
-            "herramientas": Agent(client=self._client, context_providers=[self._products_search], instructions=PRODUCTS_INSTRUCTIONS),
+            "politicas": Agent(client=self._client, context_providers=[self._hr_search], instructions=POLITICAS_INSTRUCTIONS),
+            "runbooks": Agent(client=self._client, context_providers=[self._marketing_search], instructions=RUNBOOKS_INSTRUCTIONS),
+            "herramientas": Agent(client=self._client, context_providers=[self._products_search], instructions=HERRAMIENTAS_INSTRUCTIONS),
         }
 
     async def stop(self):
@@ -317,9 +317,9 @@ async def run_orchestrator():
             router = Agent(client=client, instructions=ROUTER_INSTRUCTIONS)
 
             specialists = {
-                "politicas": Agent(client=client, context_providers=[hr_search], instructions=HR_INSTRUCTIONS),
-                "runbooks": Agent(client=client, context_providers=[marketing_search], instructions=MARKETING_INSTRUCTIONS),
-                "herramientas": Agent(client=client, context_providers=[products_search], instructions=PRODUCTS_INSTRUCTIONS),
+                "politicas": Agent(client=client, context_providers=[hr_search], instructions=POLITICAS_INSTRUCTIONS),
+                "runbooks": Agent(client=client, context_providers=[marketing_search], instructions=RUNBOOKS_INSTRUCTIONS),
+                "herramientas": Agent(client=client, context_providers=[products_search], instructions=HERRAMIENTAS_INSTRUCTIONS),
             }
 
             print("\n Multi-Agent Orchestrator with KB Grounding")

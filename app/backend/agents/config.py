@@ -14,9 +14,9 @@ SEARCH_ENDPOINT = os.getenv(
 
 MODEL = os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4o-mini")
 
-HR_INDEX = "index-politicas"
-MKT_INDEX = "index-runbooks"
-PRD_INDEX = "index-herramientas"
+INDEX_POLITICAS = "index-politicas"
+INDEX_RUNBOOKS = "index-runbooks"
+INDEX_HERRAMIENTAS = "index-herramientas"
 
 # FoundryIQ Agentic Retrieval — Knowledge Base names
 KB_POLITICAS = "kb-politicas"
