@@ -168,9 +168,9 @@ KNOWLEDGE_BASES = [
             {"name": "ks-web-pagerduty"},
         ],
         "models": [{"kind": "azureOpenAI", "azureOpenAIParameters": {
-            "resourceUri": OPENAI_ENDPOINT, "deploymentId": "gpt-4o", "modelName": "gpt-4o",
+            "resourceUri": OPENAI_ENDPOINT, "deploymentId": "gpt-4o-mini", "modelName": "gpt-4o-mini",
         }}],
-        "retrievalReasoningEffort": {"kind": "medium"},
+        "retrievalReasoningEffort": {"kind": "low"},
     },
     {
         "name": "kb-runbooks",
@@ -187,9 +187,9 @@ KNOWLEDGE_BASES = [
             {"name": "ks-web-aws-ops"},
         ],
         "models": [{"kind": "azureOpenAI", "azureOpenAIParameters": {
-            "resourceUri": OPENAI_ENDPOINT, "deploymentId": "gpt-4o", "modelName": "gpt-4o",
+            "resourceUri": OPENAI_ENDPOINT, "deploymentId": "gpt-4o-mini", "modelName": "gpt-4o-mini",
         }}],
-        "retrievalReasoningEffort": {"kind": "medium"},
+        "retrievalReasoningEffort": {"kind": "low"},
     },
     {
         "name": "kb-herramientas",
@@ -206,9 +206,9 @@ KNOWLEDGE_BASES = [
             {"name": "ks-web-hashicorp"},
         ],
         "models": [{"kind": "azureOpenAI", "azureOpenAIParameters": {
-            "resourceUri": OPENAI_ENDPOINT, "deploymentId": "gpt-4o", "modelName": "gpt-4o",
+            "resourceUri": OPENAI_ENDPOINT, "deploymentId": "gpt-4o-mini", "modelName": "gpt-4o-mini",
         }}],
-        "retrievalReasoningEffort": {"kind": "medium"},
+        "retrievalReasoningEffort": {"kind": "low"},
     },
 ]
 
