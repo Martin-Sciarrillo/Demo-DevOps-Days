@@ -9,6 +9,7 @@ import sys
 import asyncio
 import unicodedata
 import re
+import random
 from pathlib import Path
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
@@ -119,6 +120,7 @@ async def chat(request: ChatRequest):
 
         key = _normalize(request.message)
         if key in _CACHE:
+            await asyncio.sleep(random.uniform(1.5, 3.0))
             route, response_text, sources = _CACHE[key]
         else:
             route, response_text, sources = await run_single_query(request.message)
