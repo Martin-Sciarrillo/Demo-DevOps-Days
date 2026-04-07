@@ -537,6 +537,30 @@ function App() {
               </div>
             </div>
 
+            <div className="connector vertical"></div>
+
+            {/* Microsoft Foundry IQ frame */}
+            <div className="foundry-frame">
+              <div className="foundry-frame-label">✨ Microsoft Foundry IQ — Agentic Retrieval</div>
+              <div className="kb-row">
+                <div className={`kb-node ${getNodeStatus("politicas")}`}>
+                  <div className="kb-node-name">kb-politicas</div>
+                  <div className="kb-node-meta">gpt-4o-mini · low effort</div>
+                  <div className="kb-node-tag">Agentic Retrieval</div>
+                </div>
+                <div className={`kb-node ${getNodeStatus("runbooks")}`}>
+                  <div className="kb-node-name">kb-runbooks</div>
+                  <div className="kb-node-meta">gpt-4o-mini · low effort</div>
+                  <div className="kb-node-tag">Agentic Retrieval</div>
+                </div>
+                <div className={`kb-node ${getNodeStatus("herramientas")}`}>
+                  <div className="kb-node-name">kb-herramientas</div>
+                  <div className="kb-node-meta">gpt-4o-mini · low effort</div>
+                  <div className="kb-node-tag">Agentic Retrieval</div>
+                </div>
+              </div>
+            </div>
+
             <div className="connector-merge">
               <div className="merge-line left"></div>
               <div className="merge-line center"></div>
