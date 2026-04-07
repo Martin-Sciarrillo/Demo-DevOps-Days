@@ -40,19 +40,21 @@ def _normalize(q: str) -> str:
     ascii_str = "".join(c for c in nfkd if not unicodedata.combining(c))
     return re.sub(r"\s+", " ", ascii_str)
 
-async def _prewarm():
-    """Ejecuta las preguntas de demo en background y cachea las respuestas."""
+async def _prewarm_one(q: str):
     from agents.orchestrator import run_single_query
-    for q in _DEMO_QUESTIONS:
-        key = _normalize(q)
-        if key not in _CACHE:
-            try:
-                print(f"Pre-warming: {q[:50]}...")
-                result = await run_single_query(q)
-                _CACHE[key] = result
-                print(f"  ✓ cacheado ({q[:40]})")
-            except Exception as e:
-                print(f"  ✗ error pre-warming '{q[:40]}': {e}")
+    key = _normalize(q)
+    if key not in _CACHE:
+        try:
+            print(f"Pre-warming: {q[:50]}...")
+            result = await run_single_query(q)
+            _CACHE[key] = result
+            print(f"  ✓ cacheado ({q[:40]})")
+        except Exception as e:
+            print(f"  ✗ error pre-warming '{q[:40]}': {e}")
+
+async def _prewarm():
+    """Ejecuta las 3 preguntas de demo en paralelo y cachea las respuestas."""
+    await asyncio.gather(*[_prewarm_one(q) for q in _DEMO_QUESTIONS])
 
 
 class ChatRequest(BaseModel):
