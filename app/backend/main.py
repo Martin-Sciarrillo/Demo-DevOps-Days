@@ -120,7 +120,8 @@ async def chat(request: ChatRequest):
 
         key = _normalize(request.message)
         if key in _CACHE:
-            await asyncio.sleep(random.uniform(1.5, 3.0))
+            if os.getenv("DEMO_NATURAL_DELAY", "false").lower() == "true":
+                await asyncio.sleep(random.uniform(1.5, 3.0))
             route, response_text, sources = _CACHE[key]
         else:
             route, response_text, sources = await run_single_query(request.message)
