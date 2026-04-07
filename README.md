@@ -7,9 +7,7 @@
 ╚═════╝ ╚══════╝  ╚═══╝   ╚═════╝ ╚═╝     ╚══════╝    ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝
 ```
 
-> Demo presentada en **DevOps Days** por [Martin Sciarrillo](https://github.com/Martin-Sciarrillo)
-
-Demo de orquestación multi-agente usando Microsoft Agent Framework SDK y Azure AI Foundry con FoundryIQ Knowledge Bases para Agentic Retrieval. Simula un asistente interno que un ingeniero de guardia puede consultar para resolver incidentes.
+> Demo presentada en **DevOps Days** por [Martin Sciarrillo](https://github.com/Martin-Sciarrillo) de orquestación multi-agente usando Microsoft Agent Framework SDK y Azure AI Foundry con FoundryIQ Knowledge Bases para Agentic Retrieval. Simula un asistente interno que un ingeniero de guardia puede consultar para resolver incidentes.
 
 ![Demo Screenshot](docs/demo-screenshot.png)
 
