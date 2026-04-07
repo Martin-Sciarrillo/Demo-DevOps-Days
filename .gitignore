@@ -26,7 +26,6 @@ venv/
 ENV/
 
 # IDE
-.vscode/
 .idea/
 *.swp
 *.swo
@@ -59,3 +58,9 @@ Thumbs.db
 
 # Azure
 .azure/
+
+# Demo — archivos temporales de debug
+*.output
+fix_results.txt
+verify_results.txt
+all_badges.txt

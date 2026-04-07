@@ -1,9 +1,13 @@
 [project]
-name = "foundryiq-agent-framework-demo"
-version = "0.1.0"
-description = "Multi-agent orchestration demo using Microsoft Agent Framework"
+name = "devopsdays-foundryiq-demo"
+version = "1.0.0"
+description = "DevOps Days demo: Multi-agent orchestration with Microsoft Agent Framework SDK and Azure Foundry IQ Agentic Retrieval"
 readme = "README.md"
 requires-python = ">=3.11"
+authors = [
+  { name = "Martin Sciarrillo", email = "martin.sciarrillo@microsoft.com" }
+]
+keywords = ["azure", "agent-framework", "foundry-iq", "devops", "multi-agent"]
 
 [tool.ruff]
 line-length = 120
@@ -11,7 +15,7 @@ select = ["E", "F", "W", "I", "UP"]
 ignore = ["E501"]
 
 [tool.ruff.isort]
-known-first-party = ["agents", "app"]
+known-first-party = ["agents"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

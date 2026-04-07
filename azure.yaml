@@ -56,7 +56,6 @@ hooks:
         ./scripts/setup_rbac.sh
         ./scripts/setup_openai_deployments.sh
         ./scripts/setup_indexes.sh
-        ./scripts/setup_knowledge_sources.sh
-        ./scripts/setup_knowledge_bases.sh
-        ./scripts/upload_sample_data.sh
+        python ./scripts/setup_foundry_devops.py
+        python ./scripts/seed_indexes.py
       interactive: true

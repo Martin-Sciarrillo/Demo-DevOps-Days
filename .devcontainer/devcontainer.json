@@ -1,5 +1,5 @@
 {
-    "name": "FoundryIQ and Agent Framework Demo",
+    "name": "DevOps Days — FoundryIQ + Agent Framework Demo",
     "image": "mcr.microsoft.com/devcontainers/python:3.13-bookworm",
     "features": {
         "ghcr.io/devcontainers/features/node:1": {
@@ -13,20 +13,20 @@
     "customizations": {
         "vscode": {
             "extensions": [
-                "ms-azuretools.azure-dev",
-                "ms-azuretools.vscode-bicep",
                 "ms-python.python",
                 "ms-python.vscode-pylance",
+                "ms-python.black-formatter",
+                "charliermarsh.ruff",
+                "ms-azuretools.azure-dev",
+                "ms-azuretools.vscode-bicep",
+                "ms-azuretools.vscode-azure-github-copilot",
                 "esbenp.prettier-vscode",
-                "DavidAnson.vscode-markdownlint",
-                "ms-azuretools.vscode-azure-github-copilot"
+                "dbaeumer.vscode-eslint",
+                "DavidAnson.vscode-markdownlint"
             ]
         }
     },
-    "forwardPorts": [
-        8000,
-        5173
-    ],
+    "forwardPorts": [8000, 5173],
     "postCreateCommand": "pip install -r requirements-dev.txt && cd app/frontend && npm install",
     "remoteUser": "vscode",
     "hostRequirements": {
