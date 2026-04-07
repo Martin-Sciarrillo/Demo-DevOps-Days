@@ -8,21 +8,21 @@ CONFIGURATION:
 """
 
 # KB-grounded agents
-from .politicas_agent import run_hr_agent, HR_INSTRUCTIONS
-from .runbooks_agent import run_marketing_agent, MARKETING_INSTRUCTIONS
-from .herramientas_agent import run_products_agent, PRODUCTS_INSTRUCTIONS
+from .politicas_agent import run_politicas_agent, POLITICAS_INSTRUCTIONS
+from .runbooks_agent import run_runbooks_agent, RUNBOOKS_INSTRUCTIONS
+from .herramientas_agent import run_herramientas_agent, HERRAMIENTAS_INSTRUCTIONS
 
 # Orchestrator
 from .orchestrator import run_orchestrator, run_single_query
 
 __all__ = [
     # KB agents
-    "run_hr_agent",
-    "run_marketing_agent",
-    "run_products_agent",
-    "HR_INSTRUCTIONS",
-    "MARKETING_INSTRUCTIONS",
-    "PRODUCTS_INSTRUCTIONS",
+    "run_politicas_agent",
+    "run_runbooks_agent",
+    "run_herramientas_agent",
+    "POLITICAS_INSTRUCTIONS",
+    "RUNBOOKS_INSTRUCTIONS",
+    "HERRAMIENTAS_INSTRUCTIONS",
     # Orchestrator
     "run_orchestrator",
     "run_single_query",

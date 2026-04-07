@@ -99,11 +99,11 @@ UAMI_RESOURCE_ID="/subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.M
 OPENAI_ENDPOINT="https://oai-{env}-fiq-maf-demo.openai.azure.com"
 
 # Create the knowledge source
-curl -X PUT "${SEARCH_ENDPOINT}/knowledgesources/ks-products-onelake?api-version=2025-11-01-preview" \
+curl -X PUT "${SEARCH_ENDPOINT}/knowledgesources/ks-herramientas-onelake?api-version=2025-11-01-preview" \
   -H "api-key: ${SEARCH_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "ks-products-onelake",
+    "name": "ks-herramientas-onelake",
     "kind": "indexedOneLake",
     "description": "Product catalog from Fabric Lakehouse",
     "indexedOneLakeParameters": {
@@ -136,32 +136,31 @@ curl -X PUT "${SEARCH_ENDPOINT}/knowledgesources/ks-products-onelake?api-version
 
 After creating the Blob and OneLake knowledge sources, update the knowledge bases to include them:
 
-### Add ks-blob-marketing to kb-marketing
+### Add ks-blob-runbooks to kb-runbooks
 
 ```bash
 # Get current KB and add the new KS
-curl -X PATCH "${SEARCH_ENDPOINT}/knowledgebases/kb-marketing?api-version=2025-11-01-preview" \
+curl -X PATCH "${SEARCH_ENDPOINT}/knowledgebases/kb-runbooks?api-version=2025-11-01-preview" \
   -H "api-key: ${SEARCH_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
     "knowledgeSources": [
-        {"name": "ks-marketing"},
-        {"name": "ks-marketing-web"},
-        {"name": "ks-blob-marketing"}
+        {"name": "ks-runbooks"},
+        {"name": "ks-blob-runbooks"}
     ]
 }'
 ```
 
-### Add ks-products-onelake to kb-products
+### Add ks-herramientas-onelake to kb-herramientas
 
 ```bash
-curl -X PATCH "${SEARCH_ENDPOINT}/knowledgebases/kb-products?api-version=2025-11-01-preview" \
+curl -X PATCH "${SEARCH_ENDPOINT}/knowledgebases/kb-herramientas?api-version=2025-11-01-preview" \
   -H "api-key: ${SEARCH_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
     "knowledgeSources": [
-        {"name": "ks-products"},
-        {"name": "ks-products-onelake"}
+        {"name": "ks-herramientas"},
+        {"name": "ks-herramientas-onelake"}
     ]
 }'
 ```
@@ -215,13 +214,13 @@ curl -X PUT "${SEARCH_ENDPOINT}/datasources/ds-hr-sharepoint?api-version=2025-11
 ### Create SharePoint Indexer
 
 ```bash
-curl -X PUT "${SEARCH_ENDPOINT}/indexers/indexer-hr-sharepoint?api-version=2025-11-01-preview" \
+curl -X PUT "${SEARCH_ENDPOINT}/indexers/indexer-politicas-sharepoint?api-version=2025-11-01-preview" \
   -H "api-key: ${SEARCH_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "indexer-hr-sharepoint",
-    "dataSourceName": "ds-hr-sharepoint",
-    "targetIndexName": "index-hr-sharepoint",
+    "name": "indexer-politicas-sharepoint",
+    "dataSourceName": "ds-politicas-sharepoint",
+    "targetIndexName": "index-politicas",
     "parameters": {
         "configuration": {
             "indexedFileNameExtensions": ".pdf,.docx,.doc,.pptx,.xlsx"

@@ -5,9 +5,9 @@
 # This script deploys all Azure resources and configures FoundryIQ:
 # 1. Azure infrastructure via azd (OpenAI, Search, Storage, Container Apps)
 # 2. User-Assigned Managed Identity with permissions
-# 3. Search indexes with sample Zava e-commerce data
+# 3. Search indexes with sample DevOps Days CORP data
 # 4. Knowledge Sources (searchIndex, web, azureBlob, SharePoint indexed, OneLake)
-# 5. Knowledge Bases (kb-hr, kb-marketing, kb-products)
+# 5. Knowledge Bases (kb-politicas, kb-runbooks, kb-herramientas)
 # 6. Fabric/OneLake setup (optional)
 #
 # Usage:
@@ -317,12 +317,8 @@ main() {
     echo "  • UAMI: uami-${AZURE_ENV_NAME:-fiq-demo}"
     echo ""
     echo -e "${GREEN}FoundryIQ Resources:${NC}"
-    echo "  • Indexes: index-hr, index-products, index-marketing"
-    echo "  • Knowledge Sources:"
-    echo "    - ks-hr-sharepoint, ks-hr-aisearch, ks-hr-web (HR)"
-    echo "    - ks-marketing, ks-blob-marketing*, ks-marketing-web (Marketing)"
-    echo "    - ks-products, ks-products-onelake* (Products)"
-    echo "  • Knowledge Bases: kb1-hr, kb2-marketing, kb3-products"
+    echo "  • Indexes: index-politicas, index-runbooks, index-herramientas"
+    echo "  • Knowledge Bases: kb-politicas, kb-runbooks, kb-herramientas"
     echo ""
     echo -e "${YELLOW}Manual Steps Required:${NC}"
     echo "  1. Search RBAC: Portal → Search service → Keys → 'Both' (API keys + RBAC)"

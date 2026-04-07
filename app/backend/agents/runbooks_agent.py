@@ -1,4 +1,4 @@
-"""Marketing Agent - Connected to kb2-marketing Knowledge Base."""
+"""Agente de Runbooks — conectado a kb-runbooks."""
 
 import asyncio
 from azure.identity.aio import DefaultAzureCredential
@@ -7,23 +7,23 @@ from agent_framework import Agent, Message, Content
 from agent_framework_openai import OpenAIChatCompletionClient
 from agent_framework.azure import AzureAISearchContextProvider
 
-from config import OPENAI_ENDPOINT, SEARCH_ENDPOINT, MODEL, MKT_INDEX
+from config import OPENAI_ENDPOINT, SEARCH_ENDPOINT, MODEL, INDEX_RUNBOOKS
 
-MARKETING_INSTRUCTIONS = """Sos el Agente de Runbooks de DevOps Days CORP.
+RUNBOOKS_INSTRUCTIONS = """Sos el Agente de Runbooks de DevOps Days CORP.
 Respondé preguntas sobre runbooks operacionales, playbooks de incidentes, procedimientos de respuesta a alertas
 y pasos de troubleshooting usando la base de conocimiento.
 Respondé siempre en castellano rioplatense. Sé específico, listá los pasos y citá las fuentes."""
 
 
-async def run_marketing_agent(query: str) -> str:
-    """Run the Marketing agent with a query."""
+async def run_runbooks_agent(query: str) -> str:
+    """Run the Runbooks agent with a query."""
     async with DefaultAzureCredential() as credential:
         client = OpenAIChatCompletionClient(model=MODEL, azure_endpoint=OPENAI_ENDPOINT, credential=credential, api_version="2024-12-01-preview")
         async with (
             AzureAISearchContextProvider(
-                "marketing-search",
+                "runbooks-search",
                 endpoint=SEARCH_ENDPOINT,
-                index_name=MKT_INDEX,
+                index_name=INDEX_RUNBOOKS,
                 credential=credential,
                 mode="semantic",
                 semantic_configuration_name="default",
@@ -32,7 +32,7 @@ async def run_marketing_agent(query: str) -> str:
             agent = Agent(
                 client=client,
                 context_providers=[kb_context],
-                instructions=MARKETING_INSTRUCTIONS,
+                instructions=RUNBOOKS_INSTRUCTIONS,
             )
             message = Message(role="user", contents=[Content.from_text(query)])
             response = await agent.run(message)
@@ -40,13 +40,13 @@ async def run_marketing_agent(query: str) -> str:
 
 
 async def main():
-    print("\n Marketing Agent (kb2-marketing)")
+    print("\nAgente de Runbooks (kb-runbooks)")
     print("=" * 50)
 
-    query = "What are our current marketing campaigns?"
+    query = "¿Cómo resuelvo un CrashLoopBackOff en EKS?"
     print(f"\nQuery: {query}")
 
-    response = await run_marketing_agent(query)
+    response = await run_runbooks_agent(query)
     print(f"\nResponse:\n{response}")
 
 

@@ -113,9 +113,9 @@ class OrchestratorState:
     def __init__(self):
         self._credential = None
         self._client = None
-        self._hr_search = None
-        self._marketing_search = None
-        self._products_search = None
+        self._politicas_search = None
+        self._runbooks_search = None
+        self._herramientas_search = None
         self.router = None
         self.specialists = None
 
@@ -127,29 +127,29 @@ class OrchestratorState:
             credential=self._credential,
             api_version="2024-12-01-preview",
         )
-        self._hr_search = TrackingSearchProvider(
-            "hr-search", endpoint=SEARCH_ENDPOINT,
+        self._politicas_search = TrackingSearchProvider(
+            "politicas-search", endpoint=SEARCH_ENDPOINT,
             credential=self._credential, mode="agentic",
             knowledge_base_name=KB_POLITICAS, retrieval_reasoning_effort="low",
             knowledge_base_output_mode="answer_synthesis",
         )
-        self._marketing_search = TrackingSearchProvider(
-            "marketing-search", endpoint=SEARCH_ENDPOINT,
+        self._runbooks_search = TrackingSearchProvider(
+            "runbooks-search", endpoint=SEARCH_ENDPOINT,
             credential=self._credential, mode="agentic",
             knowledge_base_name=KB_RUNBOOKS, retrieval_reasoning_effort="low",
             knowledge_base_output_mode="answer_synthesis",
         )
-        self._products_search = TrackingSearchProvider(
-            "products-search", endpoint=SEARCH_ENDPOINT,
+        self._herramientas_search = TrackingSearchProvider(
+            "herramientas-search", endpoint=SEARCH_ENDPOINT,
             credential=self._credential, mode="agentic",
             knowledge_base_name=KB_HERRAMIENTAS, retrieval_reasoning_effort="low",
             knowledge_base_output_mode="answer_synthesis",
         )
         self.router = Agent(client=self._client, instructions=ROUTER_INSTRUCTIONS)
         self.specialists = {
-            "politicas": Agent(client=self._client, context_providers=[self._hr_search], instructions=POLITICAS_INSTRUCTIONS),
-            "runbooks": Agent(client=self._client, context_providers=[self._marketing_search], instructions=RUNBOOKS_INSTRUCTIONS),
-            "herramientas": Agent(client=self._client, context_providers=[self._products_search], instructions=HERRAMIENTAS_INSTRUCTIONS),
+            "politicas": Agent(client=self._client, context_providers=[self._politicas_search], instructions=POLITICAS_INSTRUCTIONS),
+            "runbooks": Agent(client=self._client, context_providers=[self._runbooks_search], instructions=RUNBOOKS_INSTRUCTIONS),
+            "herramientas": Agent(client=self._client, context_providers=[self._herramientas_search], instructions=HERRAMIENTAS_INSTRUCTIONS),
         }
 
     async def stop(self):
@@ -267,9 +267,9 @@ async def run_single_query(query: str) -> tuple[str, str, list]:
     resp = await state.specialists[route].run(user_message(query))
 
     provider_map = {
-        "politicas": state._hr_search,
-        "runbooks": state._marketing_search,
-        "herramientas": state._products_search,
+        "politicas": state._politicas_search,
+        "runbooks": state._runbooks_search,
+        "herramientas": state._herramientas_search,
     }
     provider = provider_map[route]
     sources = [_serialize_annotation(ann) for ann in (provider.last_references or [])]
@@ -287,39 +287,39 @@ async def run_orchestrator():
         )
         async with (
             AzureAISearchContextProvider(
-                "hr-search",
+                "politicas-search",
                 endpoint=SEARCH_ENDPOINT,
                 credential=credential,
                 mode="agentic",
                 knowledge_base_name=KB_POLITICAS,
                 retrieval_reasoning_effort="low",
                 knowledge_base_output_mode="answer_synthesis",
-            ) as hr_search,
+            ) as politicas_search,
             AzureAISearchContextProvider(
-                "marketing-search",
+                "runbooks-search",
                 endpoint=SEARCH_ENDPOINT,
                 credential=credential,
                 mode="agentic",
                 knowledge_base_name=KB_RUNBOOKS,
                 retrieval_reasoning_effort="low",
                 knowledge_base_output_mode="answer_synthesis",
-            ) as marketing_search,
+            ) as runbooks_search,
             AzureAISearchContextProvider(
-                "products-search",
+                "herramientas-search",
                 endpoint=SEARCH_ENDPOINT,
                 credential=credential,
                 mode="agentic",
                 knowledge_base_name=KB_HERRAMIENTAS,
                 retrieval_reasoning_effort="low",
                 knowledge_base_output_mode="answer_synthesis",
-            ) as products_search,
+            ) as herramientas_search,
         ):
             router = Agent(client=client, instructions=ROUTER_INSTRUCTIONS)
 
             specialists = {
-                "politicas": Agent(client=client, context_providers=[hr_search], instructions=POLITICAS_INSTRUCTIONS),
-                "runbooks": Agent(client=client, context_providers=[marketing_search], instructions=RUNBOOKS_INSTRUCTIONS),
-                "herramientas": Agent(client=client, context_providers=[products_search], instructions=HERRAMIENTAS_INSTRUCTIONS),
+                "politicas": Agent(client=client, context_providers=[politicas_search], instructions=POLITICAS_INSTRUCTIONS),
+                "runbooks": Agent(client=client, context_providers=[runbooks_search], instructions=RUNBOOKS_INSTRUCTIONS),
+                "herramientas": Agent(client=client, context_providers=[herramientas_search], instructions=HERRAMIENTAS_INSTRUCTIONS),
             }
 
             print("\n Multi-Agent Orchestrator with KB Grounding")
