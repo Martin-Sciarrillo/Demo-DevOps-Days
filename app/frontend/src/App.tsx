@@ -469,66 +469,70 @@ function App() {
 
             <div className="connector vertical"></div>
 
-            {/* Orchestrator Node */}
-            <div className={`workflow-node orchestrator-node ${getNodeStatus("orchestrator")}`}>
-              <div className="node-status"></div>
-              <div className="node-content">
-                <span className="node-title">Orquestador</span>
-              </div>
-              <div className="node-description">Enruta al agente especialista</div>
-              <div className="node-badge">gpt-4o-mini</div>
-            </div>
+            {/* Microsoft Agent Framework SDK frame */}
+            <div className="sdk-frame">
+              <div className="sdk-frame-label">🤖 Microsoft Agent Framework SDK</div>
 
-            <div className="connector-branch">
-              <div className="branch-line left"></div>
-              <div className="branch-line center"></div>
-              <div className="branch-line right"></div>
-            </div>
-
-            {/* Agent Nodes */}
-            <div className="agent-row">
-              <div className={`workflow-node agent-node politicas ${getNodeStatus("politicas")}`}>
+              <div className={`workflow-node orchestrator-node ${getNodeStatus("orchestrator")}`}>
                 <div className="node-status"></div>
                 <div className="node-content">
-                  <span className="node-title">Agente Políticas</span>
+                  <span className="node-title">Orquestador</span>
                 </div>
-                <div className="node-kb">
-                  <span className="kb-badge">kb-politicas</span>
-                </div>
-                <div className="node-sources">
-                  <span className="node-source-tag internal">Wiki</span>
-                  <span className="node-source-tag aws">AWS</span>
-                  <span className="node-source-tag pagerduty">PagerDuty</span>
-                </div>
+                <div className="node-description">Enruta al agente especialista</div>
+                <div className="node-badge">gpt-4o-mini</div>
               </div>
 
-              <div className={`workflow-node agent-node runbooks ${getNodeStatus("runbooks")}`}>
-                <div className="node-status"></div>
-                <div className="node-content">
-                  <span className="node-title">Agente Runbooks</span>
-                </div>
-                <div className="node-kb">
-                  <span className="kb-badge">kb-runbooks</span>
-                </div>
-                <div className="node-sources">
-                  <span className="node-source-tag internal">Wiki</span>
-                  <span className="node-source-tag terraform">Terraform</span>
-                  <span className="node-source-tag aws">AWS</span>
-                </div>
+              <div className="connector-branch">
+                <div className="branch-line left"></div>
+                <div className="branch-line center"></div>
+                <div className="branch-line right"></div>
               </div>
 
-              <div className={`workflow-node agent-node herramientas ${getNodeStatus("herramientas")}`}>
-                <div className="node-status"></div>
-                <div className="node-content">
-                  <span className="node-title">Agente Herramientas</span>
+              {/* Agent Nodes */}
+              <div className="agent-row">
+                <div className={`workflow-node agent-node politicas ${getNodeStatus("politicas")}`}>
+                  <div className="node-status"></div>
+                  <div className="node-content">
+                    <span className="node-title">Agente Políticas</span>
+                  </div>
+                  <div className="node-kb">
+                    <span className="kb-badge">kb-politicas</span>
+                  </div>
+                  <div className="node-sources">
+                    <span className="node-source-tag internal">Wiki</span>
+                    <span className="node-source-tag aws">AWS</span>
+                    <span className="node-source-tag pagerduty">PagerDuty</span>
+                  </div>
                 </div>
-                <div className="node-kb">
-                  <span className="kb-badge">kb-herramientas</span>
+
+                <div className={`workflow-node agent-node runbooks ${getNodeStatus("runbooks")}`}>
+                  <div className="node-status"></div>
+                  <div className="node-content">
+                    <span className="node-title">Agente Runbooks</span>
+                  </div>
+                  <div className="node-kb">
+                    <span className="kb-badge">kb-runbooks</span>
+                  </div>
+                  <div className="node-sources">
+                    <span className="node-source-tag internal">Wiki</span>
+                    <span className="node-source-tag terraform">Terraform</span>
+                    <span className="node-source-tag aws">AWS</span>
+                  </div>
                 </div>
-                <div className="node-sources">
-                  <span className="node-source-tag internal">Wiki</span>
-                  <span className="node-source-tag ansible">Ansible</span>
-                  <span className="node-source-tag hashicorp">HashiCorp</span>
+
+                <div className={`workflow-node agent-node herramientas ${getNodeStatus("herramientas")}`}>
+                  <div className="node-status"></div>
+                  <div className="node-content">
+                    <span className="node-title">Agente Herramientas</span>
+                  </div>
+                  <div className="node-kb">
+                    <span className="kb-badge">kb-herramientas</span>
+                  </div>
+                  <div className="node-sources">
+                    <span className="node-source-tag internal">Wiki</span>
+                    <span className="node-source-tag ansible">Ansible</span>
+                    <span className="node-source-tag hashicorp">HashiCorp</span>
+                  </div>
                 </div>
               </div>
             </div>

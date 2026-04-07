@@ -410,6 +410,35 @@ a.details-ks-name:hover {
   justify-content: center;
 }
 
+/* SDK Frame */
+.sdk-frame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  border: 2px dashed #6366F1;
+  border-radius: 16px;
+  padding: 1.75rem 1.5rem 1.25rem;
+  position: relative;
+  background: rgba(99, 102, 241, 0.04);
+  width: fit-content;
+  min-width: min(100%, 720px);
+}
+
+.sdk-frame-label {
+  position: absolute;
+  top: -11px;
+  left: 16px;
+  background: var(--bg-primary, #f8fafc);
+  padding: 0 8px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #6366F1;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
 /* Workflow Nodes */
 .workflow-node {
   background: var(--bg-card);
